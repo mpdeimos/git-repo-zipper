@@ -1,0 +1,21 @@
+language: csharp
+
+sudo: false
+
+env:
+  - NUNIT_VERSION=2.6.4
+
+install:
+  - nuget install nunit.runners -Version $NUNIT_VERSION -OutputDirectory bin
+  - NUNIT=bin/NUnit.Runners.$NUNIT_VERSION/tools/nunit-console.exe
+  - find . -name "*.sln" -exec nuget restore {} \;
+
+script: 
+  - find . -name "*.sln" -exec xbuild {} \;
+  - mono $NUNIT $(find . -path "*/test-src/bin/*_Test.dll")
+
+notifications:
+  email:
+    recipients:
+      secure: "Vb6YVh9ZGhuvDSSeFbTjfCuvEzSwNs9vtkf6GT0PfuKA8VUcaYZsnXpHv1FfwR25wWI8LfkWWYT4Q6wsSeh/C2l54EvrkUfvwxA5Qq26yrVguhPIy9ph++sG48Upt4dCaWFkrqGfrVJP+IGuwL0LW6LBAb2sXNwr4NsPBaE7dsE="
+    on_success: always

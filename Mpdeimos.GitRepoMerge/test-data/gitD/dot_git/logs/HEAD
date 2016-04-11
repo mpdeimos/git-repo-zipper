@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 e5bcc3fa55d952c9057d4e92a0054b2280ac2330 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1460438289 +0200	commit (initial): d init
+e5bcc3fa55d952c9057d4e92a0054b2280ac2330 e9ccb9674340730641fd14242a2014a25e3cae37 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1460438324 +0200	commit: d d2
+e9ccb9674340730641fd14242a2014a25e3cae37 e9ccb9674340730641fd14242a2014a25e3cae37 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1460438355 +0200	checkout: moving from master to foo
+e9ccb9674340730641fd14242a2014a25e3cae37 e5bcc3fa55d952c9057d4e92a0054b2280ac2330 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1460438369 +0200	reset: moving to e5bcc3f
+e5bcc3fa55d952c9057d4e92a0054b2280ac2330 47a7a7703062ef41bd2a27bbceb85ba510f9267e Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1460438390 +0200	commit: d d3
+47a7a7703062ef41bd2a27bbceb85ba510f9267e e9ccb9674340730641fd14242a2014a25e3cae37 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1460438399 +0200	checkout: moving from foo to master
+e9ccb9674340730641fd14242a2014a25e3cae37 264b5f79cba87583bf430e0682a733d5c4eebb2a Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1460438406 +0200	merge foo: Merge made by the 'recursive' strategy.

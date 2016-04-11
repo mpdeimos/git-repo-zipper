@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpdeimos.GitRepoMerge", "src/Mpdeimos.GitRepoMerge.csproj", "{4520C23F-BF0A-4045-BC2E-4D3F720EB1BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpdeimos.GitRepoMerge", "src\Mpdeimos.GitRepoMerge.csproj", "{4520C23F-BF0A-4045-BC2E-4D3F720EB1BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpdeimos.GitRepoMerge_Test", "test-src/Mpdeimos.GitRepoMerge_Test.csproj", "{CD6489F9-7F08-4926-AEAD-E5204B20A316}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpdeimos.GitRepoMerge_Test", "test-src\Mpdeimos.GitRepoMerge_Test.csproj", "{CD6489F9-7F08-4926-AEAD-E5204B20A316}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

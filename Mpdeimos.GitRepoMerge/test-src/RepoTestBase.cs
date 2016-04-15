@@ -7,10 +7,10 @@ namespace Mpdeimos.GitRepoMerge
 {
 	public class RepoTestBase
 	{
-		protected readonly string GitA = GetTestData("gitA/dot_git");
-		protected readonly string GitB = GetTestData("gitB/dot_git");
-		protected readonly string GitC = GetTestData("gitC/dot_git");
-		protected readonly string GitD = GetTestData("gitD/dot_git");
+		protected readonly string GitA = GetTestData(Path.Combine("gitA", "dot_git"));
+		protected readonly string GitB = GetTestData(Path.Combine("gitB", "dot_git"));
+		protected readonly string GitC = GetTestData(Path.Combine("gitC", "dot_git"));
+		protected readonly string GitD = GetTestData(Path.Combine("gitD", "dot_git"));
 
 		protected static DirectoryInfo TestData
 		{

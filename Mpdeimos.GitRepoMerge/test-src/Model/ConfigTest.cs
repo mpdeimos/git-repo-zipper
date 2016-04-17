@@ -31,7 +31,10 @@ namespace Mpdeimos.GitRepoMerge.Model
 		public void TestWithTwoRepos()
 		{
 			var config = new Config(null, this.GitA, this.GitB);
-			Assert.That(config.Sources.Select(GetRepoPath), Is.EquivalentTo(new string[]{this.GitA, this.GitB}));
+			Assert.That(config.Sources.Select(GetRepoPath), Is.EquivalentTo(new [] {
+				this.GitA,
+				this.GitB
+			}));
 		}
 
 		[Test]

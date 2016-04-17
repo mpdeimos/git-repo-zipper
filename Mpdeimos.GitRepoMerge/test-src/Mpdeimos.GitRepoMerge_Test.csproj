@@ -54,6 +54,8 @@
     <Compile Include="RepoTestBase.cs" />
     <Compile Include="Model\ConfigTest.cs" />
     <Compile Include="TestData.cs" />
+    <Compile Include="Service\RepoMergerTest.cs" />
+    <Compile Include="Util\RepoUtilTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LibGit2Sharp">
@@ -74,5 +76,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Service\" />
+    <Folder Include="Util\" />
   </ItemGroup>
 </Project>

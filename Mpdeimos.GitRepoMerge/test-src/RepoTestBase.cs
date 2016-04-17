@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using LibGit2Sharp;
 
 namespace Mpdeimos.GitRepoMerge
 {
@@ -20,6 +21,14 @@ namespace Mpdeimos.GitRepoMerge
 		protected static string GetTestRepoPath(string name)
 		{
 			return TestData.GetPath(Path.Combine(name, "dot_git"));
+		}
+
+		/// <summary>
+		/// Gets the test repository.
+		/// </summary>
+		protected static Repository GetTestRepo(string name)
+		{
+			return new Repository(GetTestRepoPath(name));
 		}
 	}
 }

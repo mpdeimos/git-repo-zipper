@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LibGit2Sharp;
 using Mpdeimos.GitRepoMerge.Model;
 using Mpdeimos.GitRepoMerge.Util;
+using System.Linq;
 
 namespace Mpdeimos.GitRepoMerge.Service
 {
@@ -47,13 +48,27 @@ namespace Mpdeimos.GitRepoMerge.Service
 		public MergedRepo Merge()
 		{
 			var mergedRepo = new MergedRepo();
-			foreach (string branchName in GetMergedBranches())
+			foreach (var repo in this.repositories)
 			{
-				foreach (var repo in this.repositories)
+				Commit commonRoot = null;
+				foreach (var branch in repo.Branches.Where(b => b.IsRemote == false))
 				{
-					//RepoUtil.GetBranch(branchName);
+					List<Commit> commits = RepoUtil.GetPrimaryParents(branch.Tip).Reverse().ToList();
+					if (commonRoot == null)
+					{
+						commits.First();
+					}
+
+					if (commits.First() != commonRoot)
+					{
+						throw new MergeException("Cannot merge repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
+					}
+
+					mergedRepo.AddBranch(branch.FriendlyName, commits);
+					
 				}
 			}
+
 			return mergedRepo;
 		}
 	}

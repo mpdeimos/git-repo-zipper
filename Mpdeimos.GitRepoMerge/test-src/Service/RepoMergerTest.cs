@@ -13,7 +13,7 @@ namespace Mpdeimos.GitRepoMerge.Service
 		[Test]
 		public void TestGetMergedBranches()
 		{
-			var merger = new RepoMerger(new []{ new Repository(GitA) });
+			var merger = new RepoMerger(new []{ GetTestRepo(GitTwoSimpleBranchesA) });
 			Assert.That(merger.GetMergedBranches(), Is.EquivalentTo(new [] {
 				"master",
 				"1"

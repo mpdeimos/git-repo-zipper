@@ -21,19 +21,19 @@ namespace Mpdeimos.GitRepoMerge.Model
 		[Test]
 		public void TestWithOneRepo()
 		{
-			var config = new Config(null, this.GitA);
+			var config = new Config(null, GetTestRepoPath(GitTwoSimpleBranchesA));
 
 			var repo = config.Sources.First();
-			Assert.AreEqual(this.GitA, GetRepoPath(repo));
+			Assert.AreEqual(GetTestRepoPath(GitTwoSimpleBranchesA), GetRepoPath(repo));
 		}
 
 		[Test]
 		public void TestWithTwoRepos()
 		{
-			var config = new Config(null, this.GitA, this.GitB);
+			var config = new Config(null, GetTestRepoPath(GitTwoSimpleBranchesA), GetTestRepoPath(GitTwoSimpleBranchesB));
 			Assert.That(config.Sources.Select(GetRepoPath), Is.EquivalentTo(new [] {
-				this.GitA,
-				this.GitB
+				GetTestRepoPath(GitTwoSimpleBranchesA),
+				GetTestRepoPath(GitTwoSimpleBranchesB)
 			}));
 		}
 

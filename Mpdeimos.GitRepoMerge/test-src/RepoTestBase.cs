@@ -10,10 +10,10 @@ namespace Mpdeimos.GitRepoMerge
 		/// </summary>
 		protected static TestData TestData { get; } = new TestData();
 
-		protected readonly string GitA = GetTestRepoPath("gitA");
-		protected readonly string GitB = GetTestRepoPath("gitB");
-		protected readonly string GitC = GetTestRepoPath("gitC");
-		protected readonly string GitD = GetTestRepoPath("gitD");
+		protected const string GitTwoSimpleBranchesA = "twoSimpleBranchesA";
+		protected const string GitTwoSimpleBranchesB = "twoSimpleBranchesB";
+		protected const string GitTwoSimpleBranchesC = "twoSimpleBranchesC";
+		protected const string GitUnnamedBranchA = "unnamedBranchA";
 
 		/// <summary>
 		/// Gets the path to a test repository.

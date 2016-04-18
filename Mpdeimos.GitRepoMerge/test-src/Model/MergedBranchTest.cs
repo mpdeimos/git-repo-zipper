@@ -2,23 +2,41 @@
 using NUnit.Framework;
 using Mpdeimos.GitRepoMerge.Util;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Mpdeimos.GitRepoMerge.Model
 {
 	[TestFixture]
 	public class MergedBranchTest : RepoTestBase
 	{
-		[Test]
-		public void TestGetMergedBranch()
+		public IEnumerable<TestCaseData> TestCaseData
 		{
-			var repo = GetTestRepo(GitTwoSimpleBranchesA);
-			var merged = new MergedBranch("foo");
-			// TODO (MP) accept a branch object here
-			merged.AddBranch(RepoUtil.GetPrimaryParents(repo.Branches["master"].Tip).Reverse().ToList());
-			Assert.That(merged.GetMergedBranch().Select(c => c.Sha), Is.EqualTo(new [] {
-				"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
-				"9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8"
-			}));
+			get
+			{
+				foreach (var scenario in MergeScenarios)
+				{
+					foreach (var branch in scenario.Branches.Keys)
+					{
+						yield return new TestCaseData(scenario.Sources, branch)
+							.Returns(scenario.Branches[branch])
+							.SetName(string.Join("+", scenario.Sources) + ":" + branch);
+					}
+				}
+			}
+		}
+
+		[Test, TestCaseSource(nameof(TestCaseData))]
+		public IEnumerable<string> TestGetMergedBranch(string[] repos, string branch)
+		{
+			var merged = new MergedBranch(branch);
+			foreach (string repo in repos)
+			{
+				var git = GetTestRepo(GitTwoSimpleBranchesA);
+				// TODO (MP) accept a branch object here
+				merged.AddBranch(RepoUtil.GetPrimaryParents(git.Branches[branch].Tip).Reverse().ToList());
+			}
+
+			return merged.GetMergedBranch().Select(c => c.Sha);
 		}
 	}
 }

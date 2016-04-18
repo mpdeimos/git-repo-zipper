@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using LibGit2Sharp;
+using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace Mpdeimos.GitRepoMerge
 {
@@ -14,6 +16,24 @@ namespace Mpdeimos.GitRepoMerge
 		protected const string GitTwoSimpleBranchesB = "twoSimpleBranchesB";
 		protected const string GitTwoSimpleBranchesC = "twoSimpleBranchesC";
 		protected const string GitUnnamedBranchA = "unnamedBranchA";
+
+		public MergeScenario[] MergeScenarios
+		{
+			get
+			{ 
+				return new [] { new MergeScenario(GitTwoSimpleBranchesA) { 
+						["master" ] = new[] {
+							"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
+							"9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8"
+						},
+						["1" ] = new[] {
+							"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
+							"9f9d6e3068f26f00b076b10380764a3519490486"
+						}
+					}
+				};
+			}
+		}
 
 		/// <summary>
 		/// Gets the path to a test repository.

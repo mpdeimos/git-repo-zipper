@@ -57,6 +57,7 @@
     <Compile Include="Service\RepoMergerTest.cs" />
     <Compile Include="Util\RepoUtilTest.cs" />
     <Compile Include="Model\MergedBranchTest.cs" />
+    <Compile Include="MergeScenario.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LibGit2Sharp">

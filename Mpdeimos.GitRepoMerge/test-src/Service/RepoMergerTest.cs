@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using LibGit2Sharp;
+using Mpdeimos.GitRepoMerge.Util;
 
 namespace Mpdeimos.GitRepoMerge.Service
 {
@@ -13,11 +14,18 @@ namespace Mpdeimos.GitRepoMerge.Service
 		[Test]
 		public void TestGetMergedBranches()
 		{
-			var merger = new RepoMerger(new []{ GetTestRepo(GitTwoSimpleBranchesA) });
+			var merger = new RepoMerger(new []{ GetTestRepo(TestData.GitTwoSimpleBranchesA) });
 			Assert.That(merger.GetMergedBranches(), Is.EquivalentTo(new [] {
 				"master",
 				"1"
 			}));
+		}
+
+		[Test]
+		public void TestFailOrphanedBranch()
+		{
+			var merger = new RepoMerger(new []{ GetTestRepo(TestData.GitOrphanedBranch) });
+			Assert.Throws<MergeException>(() => merger.Merge());
 		}
 	}
 }

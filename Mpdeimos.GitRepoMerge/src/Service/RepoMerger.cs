@@ -53,7 +53,7 @@ namespace Mpdeimos.GitRepoMerge.Service
 				Commit commonRoot = null;
 				foreach (var branch in repo.Branches.Where(b => b.IsRemote == false))
 				{
-					List<Commit> commits = RepoUtil.GetPrimaryParents(branch.Tip).Reverse().ToList();
+					List<Commit> commits = mergedRepo.AddBranch(branch.FriendlyName, branch);
 					if (commonRoot == null)
 					{
 						commits.First();
@@ -63,9 +63,6 @@ namespace Mpdeimos.GitRepoMerge.Service
 					{
 						throw new MergeException("Cannot merge repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
 					}
-
-					mergedRepo.AddBranch(branch.FriendlyName, commits);
-					
 				}
 			}
 

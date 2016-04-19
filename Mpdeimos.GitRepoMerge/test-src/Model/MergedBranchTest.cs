@@ -13,7 +13,7 @@ namespace Mpdeimos.GitRepoMerge.Model
 		{
 			get
 			{
-				foreach (var scenario in MergeScenarios)
+				foreach (var scenario in MergeScenario.Scenarios)
 				{
 					foreach (var branch in scenario.Branches.Keys)
 					{
@@ -26,17 +26,19 @@ namespace Mpdeimos.GitRepoMerge.Model
 		}
 
 		[Test, TestCaseSource(nameof(TestCaseData))]
-		public IEnumerable<string> TestGetMergedBranch(string[] repos, string branch)
+		public string[] TestGetMergedBranch(string[] repos, string branch)
 		{
 			var merged = new MergedBranch(branch);
 			foreach (string repo in repos)
 			{
-				var git = GetTestRepo(GitTwoSimpleBranchesA);
-				// TODO (MP) accept a branch object here
-				merged.AddBranch(RepoUtil.GetPrimaryParents(git.Branches[branch].Tip).Reverse().ToList());
+				var gitBranch = GetTestRepo(repo).Branches[branch];
+				if (gitBranch != null)
+				{
+					merged.AddBranch(gitBranch);
+				}
 			}
 
-			return merged.GetMergedBranch().Select(c => c.Sha);
+			return merged.GetMergedBranch().Select(c => c.Sha).ToArray();
 		}
 	}
 }

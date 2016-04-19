@@ -10,6 +10,12 @@ namespace Mpdeimos.GitRepoMerge
 	/// </summary>
 	public class TestData
 	{
+		public const string GitTwoSimpleBranchesA = "twoSimpleBranchesA";
+		public const string GitTwoSimpleBranchesB = "twoSimpleBranchesB";
+		public const string GitTwoSimpleBranchesC = "twoSimpleBranchesC";
+		public const string GitUnnamedBranchA = "unnamedBranchA";
+		public const string GitOrphanedBranch = "orphanedBranch";
+
 		private DirectoryInfo directory;
 
 		/// <summary>

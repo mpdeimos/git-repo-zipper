@@ -14,16 +14,16 @@ namespace Mpdeimos.GitRepoMerge.Model
 		private Dictionary<string, MergedBranch> Branches = new Dictionary<string, MergedBranch>();
 
 		/// <summary>
-		/// Adds a branch to the merged repository. The commits need to be in oldes-to-newest order.
+		/// Adds a branch to the merged repository. Returns the commits in oldes-to-newest order.
 		/// </summary>
-		public void AddBranch(string name, List<Commit> commits)
+		public List<Commit> AddBranch(string name, Branch branch)
 		{
 			if (!this.Branches.ContainsKey(name))
 			{
 				this.Branches[name] = new MergedBranch(name);
 			}
 
-			this.Branches[name].AddBranch(commits);
+			return this.Branches[name].AddBranch(branch);
 		}
 
 		public void RecordMerge(Commit from, Commit to)

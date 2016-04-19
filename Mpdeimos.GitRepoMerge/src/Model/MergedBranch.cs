@@ -2,6 +2,7 @@
 using LibGit2Sharp;
 using System.Collections.Generic;
 using System.Linq;
+using Mpdeimos.GitRepoMerge.Util;
 
 namespace Mpdeimos.GitRepoMerge.Model
 {
@@ -29,11 +30,13 @@ namespace Mpdeimos.GitRepoMerge.Model
 		}
 
 		/// <summary>
-		/// Adds the commits of a branch in oldest-to-newest order.
+		/// Adds the commits of a branch in oldest-to-newest order. and returns the list of commits.
 		/// </summary>
-		public void AddBranch(List<Commit> commits)
+		public List<Commit> AddBranch(Branch branch)
 		{
+			var commits = RepoUtil.GetPrimaryParents(branch.Tip).Reverse().ToList();
 			this.branches.Add(commits);
+			return commits;
 		}
 
 		/// <summary>
@@ -44,7 +47,6 @@ namespace Mpdeimos.GitRepoMerge.Model
 			var queue = this.branches.Select(commits => new Queue<Commit>(commits)).ToList();
 			while (queue.Count > 0)
 			{
-				//Aggregate((curMin, x) => (curMin == null || (x.DateOfBirth ?? DateTime.MaxValue) < curMin.DateOfBirth ? x : curMin))
 				var next = queue.Aggregate((acc, cur) => acc.Peek().Author.When < cur.Peek().Author.When ? acc : cur);
 				yield return next.Dequeue();
 

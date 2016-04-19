@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 530267e5dc26761ede6207243186900cf8a0e665 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461046112 +0200	commit (initial): orphan
+530267e5dc26761ede6207243186900cf8a0e665 c331256dda21a6954278fbcc777b51db4aa2af87 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461046168 +0200	commit (amend): orphan
+c331256dda21a6954278fbcc777b51db4aa2af87 c331256dda21a6954278fbcc777b51db4aa2af87 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461046199 +0200	Branch: renamed refs/heads/orphaned to refs/heads/orphan

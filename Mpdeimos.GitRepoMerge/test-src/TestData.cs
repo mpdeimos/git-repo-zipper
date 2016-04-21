@@ -15,6 +15,7 @@ namespace Mpdeimos.GitRepoMerge
 		public const string GitTwoSimpleBranchesC = "twoSimpleBranchesC";
 		public const string GitUnnamedBranchA = "unnamedBranchA";
 		public const string GitOrphanedBranch = "orphanedBranch";
+		public const string GitTaggedBranchA = "taggedBranchA";
 
 		private DirectoryInfo directory;
 

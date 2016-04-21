@@ -23,6 +23,46 @@ namespace Mpdeimos.GitRepoMerge.Util
 				commit = commit.Parents?.FirstOrDefault();
 			}
 		}
+
+		/// <summary>
+		/// Returns the merges into a branch. The key is the merge source commit, the value the merge commit.
+		/// </summary>
+		//		public static Dictionary<Commit, List<Commit>> GetMerges(Repository repo)
+		//		{
+		//			repo.Refs.First().Resol;
+		//			while (commit != null)
+		//			{
+		//				yield return commit;
+		//				commit = commit.Parents?.FirstOrDefault();
+		//			}
+		//		}
+
+		public static HashSet<Commit> GetAllCommits(Repository repo)
+		{
+			var commits = new HashSet<Commit>();
+			foreach (Commit rootRef in GetReferenccedCommits(repo))
+			{
+				CollectCommits(commits, rootRef);
+			}
+
+			return commits;
+		}
+
+		private static void CollectCommits(HashSet<Commit> commits, Commit commit)
+		{
+			if (commits.Add(commit))
+			{
+				foreach (Commit parent in commit.Parents)
+				{
+					CollectCommits(commits, parent);
+				}
+			}
+		}
+
+		public static IEnumerable<Commit> GetReferenccedCommits(Repository repo)
+		{
+			return repo.Refs.Select(r => r.ResolveToDirectReference()).Distinct().Select(o => o.Target).OfType<Commit>();
+		}
 	}
 }
 

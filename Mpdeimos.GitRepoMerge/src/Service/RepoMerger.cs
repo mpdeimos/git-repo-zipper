@@ -63,6 +63,8 @@ namespace Mpdeimos.GitRepoMerge.Service
 					{
 						throw new MergeException("Cannot merge repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
 					}
+
+					//RepoUtil.GetMerges(branch);
 				}
 			}
 

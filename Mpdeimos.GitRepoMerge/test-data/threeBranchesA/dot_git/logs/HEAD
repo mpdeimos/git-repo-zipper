@@ -1,0 +1,29 @@
+0000000000000000000000000000000000000000 87ec4aa875710e9254ef862915d5b812a1fd0428 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787630 +0200	commit (initial): A init
+87ec4aa875710e9254ef862915d5b812a1fd0428 87ec4aa875710e9254ef862915d5b812a1fd0428 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787792 +0200	checkout: moving from master to 1
+87ec4aa875710e9254ef862915d5b812a1fd0428 355c7a69feb2d53c42bf08b51ab0732e8d8daa19 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787821 +0200	commit: A:2
+355c7a69feb2d53c42bf08b51ab0732e8d8daa19 87ec4aa875710e9254ef862915d5b812a1fd0428 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787839 +0200	checkout: moving from 1 to 2
+87ec4aa875710e9254ef862915d5b812a1fd0428 355c7a69feb2d53c42bf08b51ab0732e8d8daa19 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787848 +0200	reset: moving to 355c7a6
+355c7a69feb2d53c42bf08b51ab0732e8d8daa19 355c7a69feb2d53c42bf08b51ab0732e8d8daa19 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787854 +0200	checkout: moving from 2 to 1
+355c7a69feb2d53c42bf08b51ab0732e8d8daa19 87ec4aa875710e9254ef862915d5b812a1fd0428 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787863 +0200	reset: moving to master
+87ec4aa875710e9254ef862915d5b812a1fd0428 8b1a2f42123b686e86fb5cea1fa75bfe5103050a Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787916 +0200	commit: A:1
+8b1a2f42123b686e86fb5cea1fa75bfe5103050a 87ec4aa875710e9254ef862915d5b812a1fd0428 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788166 +0200	checkout: moving from 1 to master
+87ec4aa875710e9254ef862915d5b812a1fd0428 e78a63af4538a1e20ba50fcdc5aa33c1b212b5f7 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788174 +0200	merge 1: Merge made by the 'recursive' strategy.
+e78a63af4538a1e20ba50fcdc5aa33c1b212b5f7 0be3f9fae7b4f1f16671e831550534189d932d59 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788180 +0200	merge 2: Merge made by the 'recursive' strategy.
+0be3f9fae7b4f1f16671e831550534189d932d59 8b1a2f42123b686e86fb5cea1fa75bfe5103050a Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788196 +0200	checkout: moving from master to 1
+8b1a2f42123b686e86fb5cea1fa75bfe5103050a 124a3545c3848acd8fa227281dfa761f918976cc Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788216 +0200	commit: A:1-2
+124a3545c3848acd8fa227281dfa761f918976cc 0be3f9fae7b4f1f16671e831550534189d932d59 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788216 +0200	checkout: moving from 1 to master
+0be3f9fae7b4f1f16671e831550534189d932d59 124a3545c3848acd8fa227281dfa761f918976cc Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788226 +0200	checkout: moving from master to 1
+124a3545c3848acd8fa227281dfa761f918976cc 355c7a69feb2d53c42bf08b51ab0732e8d8daa19 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788230 +0200	checkout: moving from 1 to 2
+355c7a69feb2d53c42bf08b51ab0732e8d8daa19 6e8de15646dcdab9cbf2643a5c623ed5585f1978 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788258 +0200	commit: A:2-2
+6e8de15646dcdab9cbf2643a5c623ed5585f1978 e311ad1741185d5c6b7156146f1a5519118a375a Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788271 +0200	merge 1: Merge made by the 'recursive' strategy.
+e311ad1741185d5c6b7156146f1a5519118a375a 6e8de15646dcdab9cbf2643a5c623ed5585f1978 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788310 +0200	reset: moving to 6e8de15
+6e8de15646dcdab9cbf2643a5c623ed5585f1978 0be3f9fae7b4f1f16671e831550534189d932d59 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788315 +0200	checkout: moving from 2 to master
+0be3f9fae7b4f1f16671e831550534189d932d59 5659f607934bff01a850be292c95988a2ddaf07e Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788318 +0200	merge 2 1: Merge made by the 'octopus' strategy.
+5659f607934bff01a850be292c95988a2ddaf07e 6e8de15646dcdab9cbf2643a5c623ed5585f1978 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789577 +0200	checkout: moving from master to 2
+6e8de15646dcdab9cbf2643a5c623ed5585f1978 2d666410e00e328dfb520e2ccb6c104a1e060323 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789601 +0200	merge 0be3f9f: Merge made by the 'recursive' strategy.
+2d666410e00e328dfb520e2ccb6c104a1e060323 69defa1e1bde3add954bc04ef761b61f29823844 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789684 +0200	merge 5659f60: Merge made by the 'recursive' strategy.
+69defa1e1bde3add954bc04ef761b61f29823844 124a3545c3848acd8fa227281dfa761f918976cc Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789730 +0200	checkout: moving from 2 to 1
+124a3545c3848acd8fa227281dfa761f918976cc 7f45647c57d3389a0928fdec132a500f78a798db Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789741 +0200	merge 2: Merge made by the 'recursive' strategy.
+7f45647c57d3389a0928fdec132a500f78a798db 5659f607934bff01a850be292c95988a2ddaf07e Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789759 +0200	checkout: moving from 1 to master
+5659f607934bff01a850be292c95988a2ddaf07e fab18bed5eca98b1c49d388dce0981b6e387332e Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789765 +0200	merge 1: Merge made by the 'recursive' strategy.
+fab18bed5eca98b1c49d388dce0981b6e387332e 7f45647c57d3389a0928fdec132a500f78a798db Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461791348 +0200	checkout: moving from master to 1

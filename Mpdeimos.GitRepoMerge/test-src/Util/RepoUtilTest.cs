@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using LibGit2Sharp;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Mpdeimos.GitRepoMerge.Util
 {
@@ -92,6 +93,80 @@ namespace Mpdeimos.GitRepoMerge.Util
 		{
 			var repo = GetTestRepo(path);
 			Assert.That(RepoUtil.GetAllCommits(repo).Select(c => c.Sha).ToArray(), Is.EquivalentTo(expected));
+		}
+
+		public static readonly object[] TestGetMergesTestData = {
+			new object [] {
+				TestData.GitTwoSimpleBranchesA, 
+				new Dictionary<string, HashSet<string>> {
+					["9f9d6e3068f26f00b076b10380764a3519490486" ] = new HashSet<string>{ "9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8" }
+				}
+			},
+			new object [] {
+				TestData.GitTwoSimpleBranchesB, 
+				new Dictionary<string, HashSet<string>> {
+					["c3eaaec75fb1dd7e1dcab7f8d2efe8bef83f7100" ] = new HashSet<string>{ "0033408fbb0366dbda1f6a86ecef041021378e8b" }
+				}
+			},
+			new object [] {
+				TestData.GitThreeBranchesA, 
+				new Dictionary<string, HashSet<string>> {
+					["7f45647c57d3389a0928fdec132a500f78a798db" ] = new HashSet<string>{ "fab18bed5eca98b1c49d388dce0981b6e387332e" },
+					["69defa1e1bde3add954bc04ef761b61f29823844" ] = new HashSet<string>{ "7f45647c57d3389a0928fdec132a500f78a798db" },
+					["5659f607934bff01a850be292c95988a2ddaf07e" ] = new HashSet<string>{ "69defa1e1bde3add954bc04ef761b61f29823844" },
+					["0be3f9fae7b4f1f16671e831550534189d932d59" ] = new HashSet<string>{ "2d666410e00e328dfb520e2ccb6c104a1e060323" },
+					["124a3545c3848acd8fa227281dfa761f918976cc" ] = new HashSet<string>{ "5659f607934bff01a850be292c95988a2ddaf07e" },
+					["6e8de15646dcdab9cbf2643a5c623ed5585f1978" ] = new HashSet<string>{ "5659f607934bff01a850be292c95988a2ddaf07e" },
+					["355c7a69feb2d53c42bf08b51ab0732e8d8daa19" ] = new HashSet<string>{ "0be3f9fae7b4f1f16671e831550534189d932d59" },
+					["8b1a2f42123b686e86fb5cea1fa75bfe5103050a" ] = new HashSet<string>{ "e78a63af4538a1e20ba50fcdc5aa33c1b212b5f7" },
+				}
+			},
+			new object [] {
+				TestData.GitThreeBranchesB, 
+				new Dictionary<string, HashSet<string>> {
+					["e59d978033861cd034c33b41d0866f973e275a2c" ] = new HashSet<string>{ "1411cd804254b1a94ae17dd114b06e09404faae0" },
+					["4d07cfc4ab0cca825202ca1d6f04d50a37047d2b" ] = new HashSet<string>{ "1411cd804254b1a94ae17dd114b06e09404faae0" },
+					["a7f47d6ccc0be64a75a1c06f716f15e03584b55c" ] = new HashSet<string> {
+						"4d07cfc4ab0cca825202ca1d6f04d50a37047d2b",
+						"e59d978033861cd034c33b41d0866f973e275a2c"
+					},
+					["06e8c24210cb2151793be89852398fb29cdaa92c" ] = new HashSet<string>{ "36b2931e54afa1e1b1a300b7855d8d867be56b9c" },
+					["c6a637be29111a85d306209a1aabf20459df3f36" ] = new HashSet<string>{ "227d283a809450cbc03268be7355203799f6ffab" },
+					["e4375536bce5d065ca702793bba955f252394521" ] = new HashSet<string>{ "0b148c4b67e9874c8d40cc501735936f01fb2897" },
+					["46301bc5beead1a012d5fa62711cc7c41054edde" ] = new HashSet<string>{ "06e8c24210cb2151793be89852398fb29cdaa92c" },
+					["3f09856b3b565919c9aeba7e8342ee18cedf8929" ] = new HashSet<string>{ "b4b4001f27ce2e6e04e964a293e7e0d358dfb4e1" },
+					["776a4ab8a98293b39523c04d3b901121ac244138" ] = new HashSet<string>{ "b4b4001f27ce2e6e04e964a293e7e0d358dfb4e1" },
+				}
+			},
+			new object [] {
+				TestData.GitTwoSimpleBranchesC, new Dictionary<string, HashSet<string>>()
+			},
+			new object [] {
+				TestData.GitUnnamedBranchA, 
+				new Dictionary<string, HashSet<string>> {
+					["47a7a7703062ef41bd2a27bbceb85ba510f9267e" ] = new HashSet<string>{ "264b5f79cba87583bf430e0682a733d5c4eebb2a" }
+				}
+			},
+			new object [] {
+				TestData.GitTaggedBranchA, 
+				new Dictionary<string, HashSet<string>> {
+					["f898f7ee4608e6a86dccaa86f2e6af8467dd7be9" ] = new HashSet<string>{ "2bd7867d910fbcf28cbc7653096a0bc26a29b37e" }
+				}
+			},
+			new object [] {
+				TestData.GitOrphanedBranch, new Dictionary<string, HashSet<string>>()
+			}
+		};
+
+		[Test, TestCaseSource(nameof(TestGetMergesTestData))]
+		public void TestGetMerges(string path, Dictionary<string, HashSet<string>> expected)
+		{
+			var merges = RepoUtil.GetMerges(GetTestRepo(path));
+			Assert.That(merges.Keys.Select(c => c.Sha), Is.EquivalentTo(expected.Keys), "Merge sources do not match");
+			foreach (Commit source in merges.Keys)
+			{
+				Assert.That(merges[source].Select(c => c.Sha), Is.EquivalentTo(expected[source.Sha]), $"Merge target does not match for source {source.Sha}");
+			}
 		}
 	}
 }

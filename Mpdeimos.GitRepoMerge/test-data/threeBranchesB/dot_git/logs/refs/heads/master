@@ -1,0 +1,8 @@
+0000000000000000000000000000000000000000 d6a65c8618167ff80caed86928deb08f9defc089 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461787673 +0200	commit (initial): B init
+d6a65c8618167ff80caed86928deb08f9defc089 b4b4001f27ce2e6e04e964a293e7e0d358dfb4e1 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788069 +0200	merge 1 2: Merge made by the 'octopus' strategy.
+b4b4001f27ce2e6e04e964a293e7e0d358dfb4e1 c6a637be29111a85d306209a1aabf20459df3f36 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788423 +0200	cherry-pick: B-2
+c6a637be29111a85d306209a1aabf20459df3f36 06e8c24210cb2151793be89852398fb29cdaa92c Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788501 +0200	merge 1: Merge made by the 'recursive' strategy.
+06e8c24210cb2151793be89852398fb29cdaa92c 0b148c4b67e9874c8d40cc501735936f01fb2897 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461788506 +0200	merge 2: Merge made by the 'recursive' strategy.
+0b148c4b67e9874c8d40cc501735936f01fb2897 e30d3eb9caa221fc08ef1df88eeef936c39eade5 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789243 +0200	commit: B:1-2
+e30d3eb9caa221fc08ef1df88eeef936c39eade5 a7f47d6ccc0be64a75a1c06f716f15e03584b55c Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789255 +0200	commit (amend): B-3
+a7f47d6ccc0be64a75a1c06f716f15e03584b55c 1411cd804254b1a94ae17dd114b06e09404faae0 Martin Pöhlmann <mpdeimos@users.noreply.github.com> 1461789845 +0200	merge 1 2: Merge made by the 'octopus' strategy.

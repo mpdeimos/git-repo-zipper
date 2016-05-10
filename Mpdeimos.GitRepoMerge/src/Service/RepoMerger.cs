@@ -13,6 +13,8 @@ namespace Mpdeimos.GitRepoMerge.Service
 	/// </summary>
 	public class RepoMerger
 	{
+		const string GraftsFile = ".git/info/grafts";
+
 		/// <summary>
 		/// The repositories to merge.
 		/// </summary>
@@ -122,19 +124,10 @@ namespace Mpdeimos.GitRepoMerge.Service
 				CherryPickCommits(repo, commits, name);
 			}
 
-			var graftsFile = Path.Combine(target, ".git/info/grafts");
-			var grafts = source.GetMerges().Select(merge =>
-			{
-				var graft = new List<Commit> {
-					commitMap[merge],
-					commitMap[merge].Parents.First() // ensure to take first merged parent
-				};
-				graft.AddRange(merge.Parents.Skip(1).Select(parent => commitMap[parent]));
-				return string.Join(" ", graft.Select(c => c.Sha));
-			});
-			File.WriteAllLines(graftsFile, grafts);
 			// TODO (MP) Handle anon branches
-			// TODO (MP) Insert merges
+
+			GraftMerges(repo, source);
+
 			// TODO (MP) Test
 		}
 
@@ -152,24 +145,11 @@ namespace Mpdeimos.GitRepoMerge.Service
 
 				if (repo.Branches[branchName] == null)
 				{
+					repo.Checkout(repo.CreateBranch(branchName, branchPoint ?? original));
 					if (branchPoint == null)
 					{
-						var sig = new Signature(original.Author.Name, original.Author.Email, original.Author.When.AddSeconds(-1));
-						if (repo.Head.Tip != null)
-						{
-							// TODO (MP) We could try to handle this as well, however we need to create a parentless branch 1st
-							// Other idea is to create the branch ON the original commit
-							throw new MergeException("Initial commit already created");
-						}
-
-						var head = repo.Commit("Initial commit.", sig, sig, new CommitOptions{ AllowEmptyCommit = true });
-						branchPoint = head;
-						// above command creates a master branch, let's rename it
-						repo.Branches.Rename("master", branchName);
-					}
-					else
-					{
-						repo.Checkout(repo.CreateBranch(branchName, branchPoint));
+						commitMap[original] = original;
+						continue;
 					}
 				}
 
@@ -183,6 +163,34 @@ namespace Mpdeimos.GitRepoMerge.Service
 					             new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When),
 					             options);
 				commitMap[original] = result.Commit;
+			}
+		}
+
+		void GraftMerges(Repository repo, MergedRepo source)
+		{
+			var merges = source.GetMerges().ToDictionary(merge => commitMap[merge]);
+
+			repo.Refs.RewriteHistory(new RewriteHistoryOptions {
+				CommitParentsRewriter = commit =>
+				{
+					if (!merges.ContainsKey(commit))
+					{
+						return commit.Parents;
+					}
+
+					Commit[] parents = merges[commit].Parents.Select(parent => commitMap[parent]).ToArray();
+
+					// ensure to take first zipped parent
+					parents[0] = commit.Parents.First();
+
+					return parents;
+				}
+			}, RepoUtil.GetAllCommits(repo));
+
+			// cleanup original refs
+			foreach (var @ref in repo.Refs.FromGlob("refs/original/*"))
+			{
+				repo.Refs.Remove(@ref);
 			}
 		}
 	}

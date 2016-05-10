@@ -1,19 +1,19 @@
 ﻿using System;
 using NUnit.Framework;
-using Mpdeimos.GitRepoMerge.Util;
+using Mpdeimos.GitRepoZipper.Util;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Mpdeimos.GitRepoMerge.Model
+namespace Mpdeimos.GitRepoZipper.Model
 {
 	[TestFixture]
-	public class MergedBranchTest : RepoTestBase
+	public class ZippedBranchTest : RepoTestBase
 	{
 		public IEnumerable<TestCaseData> TestCaseData
 		{
 			get
 			{
-				foreach (var scenario in MergeScenario.Scenarios)
+				foreach (var scenario in ZipScenario.Scenarios)
 				{
 					foreach (var branch in scenario.Branches.Keys)
 					{
@@ -26,19 +26,19 @@ namespace Mpdeimos.GitRepoMerge.Model
 		}
 
 		[Test, TestCaseSource(nameof(TestCaseData))]
-		public string[] TestGetMergedBranch(string[] repos, string branch)
+		public string[] TestGetZippedBranch(string[] repos, string branch)
 		{
-			var merged = new MergedBranch(branch);
+			var zipped = new ZippedBranch(branch);
 			foreach (string repo in repos)
 			{
 				var gitBranch = GetTestRepo(repo).Branches[branch];
 				if (gitBranch != null)
 				{
-					merged.AddBranch(gitBranch);
+					zipped.AddBranch(gitBranch);
 				}
 			}
 
-			return merged.GetMergedBranch().Select(c => c.Sha).ToArray();
+			return zipped.GetZippedBranch().Select(c => c.Sha).ToArray();
 		}
 	}
 }

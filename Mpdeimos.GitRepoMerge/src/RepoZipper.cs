@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using LibGit2Sharp;
-using Mpdeimos.GitRepoMerge.Model;
-using Mpdeimos.GitRepoMerge.Util;
+using Mpdeimos.GitRepoZipper.Model;
+using Mpdeimos.GitRepoZipper.Util;
 using System.Linq;
 using System.IO;
 
-namespace Mpdeimos.GitRepoMerge
+namespace Mpdeimos.GitRepoZipper
 {
 	/// <summary>
 	/// Zips multiple Git repositories into a single Git repository.
@@ -14,12 +14,12 @@ namespace Mpdeimos.GitRepoMerge
 	public class RepoZipper
 	{
 		/// <summary>
-		/// The merger configuration.
+		/// The zipper configuration.
 		/// </summary>
 		private readonly Config config;
 
 		/// <summary>
-		/// The repositories to merge.
+		/// The repositories to zip.
 		/// </summary>
 		private readonly IEnumerable<Repository> repositories;
 
@@ -40,7 +40,7 @@ namespace Mpdeimos.GitRepoMerge
 		/// <summary>
 		/// Returns the names of the merged branches.
 		/// </summary>
-		public IEnumerable<string> GetMergedBranches()
+		public IEnumerable<string> GetZippedBranches()
 		{
 			var branches = new HashSet<string>();
 			foreach (var repo in this.repositories)
@@ -59,32 +59,32 @@ namespace Mpdeimos.GitRepoMerge
 		/// </summary>
 		public Repository Zip()
 		{
-			var mergedRepo = MergeRepository();
+			var zippedRepo = ZipRepository();
 			var targetRepo = InitRepository();
-			BuildRepository(targetRepo, mergedRepo);
+			BuildRepository(targetRepo, zippedRepo);
 			return targetRepo;
 		}
 
-		private MergedRepo MergeRepository()
+		private ZippedRepo ZipRepository()
 		{
-			var mergedRepo = new MergedRepo();
+			var zippedRepo = new ZippedRepo();
 			foreach (var repo in this.repositories)
 			{
 				Commit commonRoot = null;
 				foreach (var branch in repo.Branches.Where(b => b.IsRemote == false))
 				{
-					List<Commit> commits = mergedRepo.AddBranch(branch.FriendlyName, branch);
+					List<Commit> commits = zippedRepo.AddBranch(branch.FriendlyName, branch);
 					if (commonRoot == null)
 					{
 						commonRoot = commits.First();
 					}
 					if (commits.First() != commonRoot)
 					{
-						throw new MergeException("Cannot merge repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
+						throw new ZipperException("Cannot zip repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
 					}
 				}
 			}
-			return mergedRepo;
+			return zippedRepo;
 		}
 
 		Repository InitRepository()
@@ -94,7 +94,7 @@ namespace Mpdeimos.GitRepoMerge
 			{
 				if (!this.config.Force)
 				{
-					throw new MergeException("Target directory '" + target + "' already exists.");
+					throw new ZipperException("Target directory '" + target + "' already exists.");
 				}
 
 				foreach (var file in target.GetFiles())
@@ -119,7 +119,7 @@ namespace Mpdeimos.GitRepoMerge
 			return targetRepo;
 		}
 
-		private void BuildRepository(Repository repo, MergedRepo source)
+		private void BuildRepository(Repository repo, ZippedRepo source)
 		{
 			foreach (string name in source.GetBranches())
 			{
@@ -169,7 +169,7 @@ namespace Mpdeimos.GitRepoMerge
 			}
 		}
 
-		void GraftMerges(Repository repo, MergedRepo source)
+		void GraftMerges(Repository repo, ZippedRepo source)
 		{
 			var merges = source.GetMerges().ToDictionary(merge => commitMap[merge]);
 

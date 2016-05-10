@@ -1,10 +1,10 @@
 ﻿using System;
 using NUnit.Framework;
 using LibGit2Sharp;
-using Mpdeimos.GitRepoMerge.Util;
-using Mpdeimos.GitRepoMerge.Model;
+using Mpdeimos.GitRepoZipper.Util;
+using Mpdeimos.GitRepoZipper.Model;
 
-namespace Mpdeimos.GitRepoMerge
+namespace Mpdeimos.GitRepoZipper
 {
 	/// <summary>
 	/// Test for the RepoZipper class.
@@ -17,8 +17,8 @@ namespace Mpdeimos.GitRepoMerge
 		[Test]
 		public void TestGetMergedBranches()
 		{
-			var merger = new RepoZipper(new Config { Sources = new []{ GetTestRepoPath(TestData.GitTwoSimpleBranchesA) } });
-			Assert.That(merger.GetMergedBranches(), Is.EquivalentTo(new [] {
+			var zipper = new RepoZipper(new Config { Sources = new []{ GetTestRepoPath(TestData.GitTwoSimpleBranchesA) } });
+			Assert.That(zipper.GetZippedBranches(), Is.EquivalentTo(new [] {
 				"master",
 				"1"
 			}));
@@ -34,8 +34,8 @@ namespace Mpdeimos.GitRepoMerge
 		[Test]
 		public void TestFailOrphanedBranch()
 		{
-			var merger = new RepoZipper(new Config { Sources = new []{ GetTestRepoPath(TestData.GitOrphanedBranch) } });
-			Assert.Throws<MergeException>(() => merger.Zip());
+			var zipper = new RepoZipper(new Config { Sources = new []{ GetTestRepoPath(TestData.GitOrphanedBranch) } });
+			Assert.Throws<ZipperException>(() => zipper.Zip());
 		}
 
 	}

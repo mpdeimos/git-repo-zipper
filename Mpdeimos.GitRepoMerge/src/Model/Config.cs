@@ -5,7 +5,7 @@ using System.Linq;
 using CommandLine;
 using CommandLine.Text;
 
-namespace Mpdeimos.GitRepoMerge.Model
+namespace Mpdeimos.GitRepoZipper.Model
 {
 	public class Config
 	{

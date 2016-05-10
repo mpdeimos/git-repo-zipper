@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mpdeimos.GitRepoMerge
+namespace Mpdeimos.GitRepoZipper
 {
-	public class MergeScenario
+	public class ZipScenario
 	{
 		public string[] Sources { get; private set; }
 
@@ -11,19 +11,19 @@ namespace Mpdeimos.GitRepoMerge
 
 		public string[] this[string name] { set { this.Branches[name] = value; } }
 
-		public MergeScenario(params string[] sources)
+		public ZipScenario(params string[] sources)
 		{
 			this.Sources = sources;
 		}
 
 		/// <summary>
-		/// Different merge scenarios.
+		/// Different zip scenarios.
 		/// </summary>
-		public static MergeScenario[] Scenarios
+		public static ZipScenario[] Scenarios
 		{
 			get
 			{ 
-				return new [] { new MergeScenario(TestData.GitTwoSimpleBranchesA) { 
+				return new [] { new ZipScenario(TestData.GitTwoSimpleBranchesA) { 
 						["master" ] = new[] {
 							"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
 							"9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8",
@@ -33,7 +33,7 @@ namespace Mpdeimos.GitRepoMerge
 							"9f9d6e3068f26f00b076b10380764a3519490486",
 						}
 					},
-					new MergeScenario(TestData.GitTwoSimpleBranchesA, TestData.GitTwoSimpleBranchesB) { 
+					new ZipScenario(TestData.GitTwoSimpleBranchesA, TestData.GitTwoSimpleBranchesB) { 
 						["master" ] = new[] {
 							"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
 							"9590d59b0d639f5cd8d1e2da03ae52161ec02b2b",
@@ -50,7 +50,7 @@ namespace Mpdeimos.GitRepoMerge
 							"c3eaaec75fb1dd7e1dcab7f8d2efe8bef83f7100",
 						}
 					},
-					new MergeScenario(TestData.GitTwoSimpleBranchesA, TestData.GitTwoSimpleBranchesB, TestData.GitTwoSimpleBranchesC) { 
+					new ZipScenario(TestData.GitTwoSimpleBranchesA, TestData.GitTwoSimpleBranchesB, TestData.GitTwoSimpleBranchesC) { 
 						["master" ] = new[] {
 							"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
 							"9590d59b0d639f5cd8d1e2da03ae52161ec02b2b",

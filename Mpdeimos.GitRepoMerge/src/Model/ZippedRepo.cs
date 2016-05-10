@@ -2,17 +2,17 @@
 using System.Linq;
 using LibGit2Sharp;
 using System.Collections.Generic;
-using Mpdeimos.GitRepoMerge.Util;
+using Mpdeimos.GitRepoZipper.Util;
 
-namespace Mpdeimos.GitRepoMerge.Model
+namespace Mpdeimos.GitRepoZipper.Model
 {
 	/// <summary>
-	/// Abstraction of a merged repository.
+	/// Abstraction of a zipped repository.
 	/// </summary>
-	public class MergedRepo
+	public class ZippedRepo
 	{
 		/// <summary>
-		/// The known commits of the merged repository.
+		/// The known commits of the zipped repository.
 		/// </summary>
 		private HashSet<Commit> Commits = new HashSet<Commit>();
 
@@ -22,24 +22,24 @@ namespace Mpdeimos.GitRepoMerge.Model
 		private List<Commit> Merges = new List<Commit>();
 
 		/// <summary>
-		/// The named branches in the merged repository.
+		/// The named branches in the zipped repository.
 		/// </summary>
-		private Dictionary<string, MergedBranch> Branches = new Dictionary<string, MergedBranch>();
+		private Dictionary<string, ZippedBranch> Branches = new Dictionary<string, ZippedBranch>();
 
 		/// <summary>
-		/// Adds a branch to the merged repository. Returns the commits in oldes-to-newest order.
+		/// Adds a branch to the zipped repository. Returns the commits in oldes-to-newest order.
 		/// </summary>
 		public List<Commit> AddBranch(string name, Branch branch)
 		{
 			if (!this.Branches.ContainsKey(name))
 			{
-				this.Branches[name] = new MergedBranch(name);
+				this.Branches[name] = new ZippedBranch(name);
 			}
 
-			var mergedBranch = this.Branches[name].AddBranch(branch);
-			RecordCommits(mergedBranch);
+			var zippedBranch = this.Branches[name].AddBranch(branch);
+			RecordCommits(zippedBranch);
 
-			return mergedBranch;
+			return zippedBranch;
 		}
 
 		/// <summary>
@@ -73,14 +73,14 @@ namespace Mpdeimos.GitRepoMerge.Model
 
 		public IEnumerable<Commit> GetBranch(string name)
 		{
-			return this.Branches[name].GetMergedBranch();
+			return this.Branches[name].GetZippedBranch();
 		}
 
 		// TODO Test
 		public IEnumerable<Commit> GetAnonymousBranchCommits()
 		{
 			var mergeParents = new HashSet<Commit>(this.Merges.SelectMany(merge => merge.Parents));
-			foreach (var branchCommit in this.Branches.SelectMany(entry => entry.Value.GetMergedBranch()))
+			foreach (var branchCommit in this.Branches.SelectMany(entry => entry.Value.GetZippedBranch()))
 			{
 				mergeParents.Remove(branchCommit);
 			}

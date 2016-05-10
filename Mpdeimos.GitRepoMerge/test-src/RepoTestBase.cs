@@ -3,7 +3,7 @@ using LibGit2Sharp;
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace Mpdeimos.GitRepoMerge
+namespace Mpdeimos.GitRepoZipper
 {
 	public class RepoTestBase
 	{

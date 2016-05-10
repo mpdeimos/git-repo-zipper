@@ -3,7 +3,7 @@ using LibGit2Sharp;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Mpdeimos.GitRepoMerge.Util
+namespace Mpdeimos.GitRepoZipper.Util
 {
 	/// <summary>
 	/// Utility class for managing git repositories.

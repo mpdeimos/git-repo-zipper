@@ -2,14 +2,14 @@
 using LibGit2Sharp;
 using System.Collections.Generic;
 using System.Linq;
-using Mpdeimos.GitRepoMerge.Util;
+using Mpdeimos.GitRepoZipper.Util;
 
-namespace Mpdeimos.GitRepoMerge.Model
+namespace Mpdeimos.GitRepoZipper.Model
 {
 	/// <summary>
 	/// Represents a branch for multiple repositories.
 	/// </summary>
-	public class MergedBranch
+	public class ZippedBranch
 	{
 		/// <summary>
 		/// The name of the branch.
@@ -17,14 +17,14 @@ namespace Mpdeimos.GitRepoMerge.Model
 		private string name;
 
 		/// <summary>
-		/// The 
+		/// The branches of single repositories.
 		/// </summary>
 		private List<List<Commit>> branches = new List<List<Commit>>();
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public MergedBranch(string name)
+		public ZippedBranch(string name)
 		{
 			this.name = name;
 		}
@@ -40,9 +40,9 @@ namespace Mpdeimos.GitRepoMerge.Model
 		}
 
 		/// <summary>
-		/// Returns the merged commits in oldest-to-newest-oder.
+		/// Returns the zipped commits in oldest-to-newest-oder.
 		/// </summary>
-		public IEnumerable<Commit> GetMergedBranch()
+		public IEnumerable<Commit> GetZippedBranch()
 		{
 			var queue = this.branches.Select(commits => new Queue<Commit>(commits)).ToList();
 			while (queue.Count > 0)

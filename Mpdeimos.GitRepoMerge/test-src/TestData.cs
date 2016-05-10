@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 
-namespace Mpdeimos.GitRepoMerge
+namespace Mpdeimos.GitRepoZipper
 {
 	/// <summary>
 	/// Manages test data files.

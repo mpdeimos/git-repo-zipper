@@ -4,7 +4,7 @@ using LibGit2Sharp;
 using System.Linq;
 using System.IO;
 
-namespace Mpdeimos.GitRepoMerge.Model
+namespace Mpdeimos.GitRepoZipper.Model
 {
 	[TestFixture]
 	public class ConfigTest : RepoTestBase

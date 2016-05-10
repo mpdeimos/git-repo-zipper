@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using LibGit2Sharp;
-using Mpdeimos.GitRepoMerge.Util;
-using Mpdeimos.GitRepoMerge.Model;
+using Mpdeimos.GitRepoZipper.Util;
+using Mpdeimos.GitRepoZipper.Model;
 
-namespace Mpdeimos.GitRepoMerge
+namespace Mpdeimos.GitRepoZipper
 {
 	class MainClass
 	{
@@ -23,8 +23,8 @@ namespace Mpdeimos.GitRepoMerge
 
 		static void ZipRepositories(Config config)
 		{
-			var merger = new RepoZipper(config);
-			merger.Zip();
+			var zipper = new RepoZipper(config);
+			zipper.Zip();
 		}
 	}
 }

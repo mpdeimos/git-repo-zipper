@@ -9,10 +9,13 @@ namespace Mpdeimos.GitRepoMerge.Model
 	[TestFixture]
 	public class ConfigTest : RepoTestBase
 	{
+		// TODO Add tests for default values
+		// TODO Add tests for commandline parsing
+
 		[Test]
 		public void TestAllNull()
 		{
-			var config = new Config(null, null);
+			var config = new Config();
 
 			Assert.IsNull(config.Target);
 			Assert.IsNull(config.Sources);
@@ -21,7 +24,7 @@ namespace Mpdeimos.GitRepoMerge.Model
 		[Test]
 		public void TestWithOneRepo()
 		{
-			var config = new Config(null, GetTestRepoPath(TestData.GitTwoSimpleBranchesA));
+			var config = new Config { Sources = new [] { GetTestRepoPath(TestData.GitTwoSimpleBranchesA) } };
 
 			var repo = config.Sources.First();
 			Assert.AreEqual(GetTestRepoPath(TestData.GitTwoSimpleBranchesA), GetRepoPath(repo));
@@ -30,23 +33,19 @@ namespace Mpdeimos.GitRepoMerge.Model
 		[Test]
 		public void TestWithTwoRepos()
 		{
-			var config = new Config(null, GetTestRepoPath(TestData.GitTwoSimpleBranchesA), GetTestRepoPath(TestData.GitTwoSimpleBranchesB));
+			var config = new Config {
+				Sources = new [] {GetTestRepoPath(TestData.GitTwoSimpleBranchesA),	GetTestRepoPath(TestData.GitTwoSimpleBranchesB)
+				}
+			};
 			Assert.That(config.Sources.Select(GetRepoPath), Is.EquivalentTo(new [] {
 				GetTestRepoPath(TestData.GitTwoSimpleBranchesA),
 				GetTestRepoPath(TestData.GitTwoSimpleBranchesB)
 			}));
 		}
 
-		[Test]
-		public void TestInvalidRepos()
+		private static string GetRepoPath(string repo)
 		{
-			var config = new Config(null, "/non/existing");
-			Assert.Throws<RepositoryNotFoundException>(() => config.Sources.First());
-		}
-
-		private static string GetRepoPath(Repository repo)
-		{
-			return repo.Info.Path.TrimEnd(Path.DirectorySeparatorChar);
+			return new Repository(repo).Info.Path.TrimEnd(Path.DirectorySeparatorChar);
 		}
 	}
 }

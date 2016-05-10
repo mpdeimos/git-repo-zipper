@@ -54,10 +54,10 @@
     <Compile Include="RepoTestBase.cs" />
     <Compile Include="Model\ConfigTest.cs" />
     <Compile Include="TestData.cs" />
-    <Compile Include="Service\RepoMergerTest.cs" />
     <Compile Include="Util\RepoUtilTest.cs" />
     <Compile Include="Model\MergedBranchTest.cs" />
     <Compile Include="MergeScenario.cs" />
+    <Compile Include="RepoZipperTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LibGit2Sharp">
@@ -67,6 +67,9 @@
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="CommandLine">
+      <HintPath>..\packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -81,7 +84,6 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Service\" />
     <Folder Include="Util\" />
   </ItemGroup>
 </Project>

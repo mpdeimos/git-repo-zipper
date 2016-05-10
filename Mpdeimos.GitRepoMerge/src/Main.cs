@@ -3,7 +3,6 @@ using System.Linq;
 using LibGit2Sharp;
 using Mpdeimos.GitRepoMerge.Util;
 using Mpdeimos.GitRepoMerge.Model;
-using Mpdeimos.GitRepoMerge.Service;
 
 namespace Mpdeimos.GitRepoMerge
 {
@@ -13,29 +12,19 @@ namespace Mpdeimos.GitRepoMerge
 		{
 			try
 			{
-				var config = ParseCommandline(args);
+				var config = new Config(args);
 				ZipRepositories(config);
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e);	
+				Console.Error.WriteLine(e);	
 			}
-		}
-
-		static Config ParseCommandline(string[] args)
-		{
-			if (args.Length < 2)
-			{
-				throw new MergeException("Need to specify target and at least one source repository.");
-			}
-			var config = new Config(args[0], args.Skip(1).ToArray());
-			return config;
 		}
 
 		static void ZipRepositories(Config config)
 		{
-			var merger = new RepoMerger(config.Sources, config.Target);
-			merger.Merge();
+			var merger = new RepoZipper(config);
+			merger.Zip();
 		}
 	}
 }

@@ -6,14 +6,17 @@ using Mpdeimos.GitRepoMerge.Util;
 using System.Linq;
 using System.IO;
 
-namespace Mpdeimos.GitRepoMerge.Service
+namespace Mpdeimos.GitRepoMerge
 {
 	/// <summary>
-	/// Merges multiple Git repositories into a stream of MergedCommit objects.
+	/// Zips multiple Git repositories into a single Git repository.
 	/// </summary>
-	public class RepoMerger
+	public class RepoZipper
 	{
-		const string GraftsFile = ".git/info/grafts";
+		/// <summary>
+		/// The merger configuration.
+		/// </summary>
+		private readonly Config config;
 
 		/// <summary>
 		/// The repositories to merge.
@@ -21,22 +24,17 @@ namespace Mpdeimos.GitRepoMerge.Service
 		private readonly IEnumerable<Repository> repositories;
 
 		/// <summary>
-		/// The path to the target repository.
-		/// </summary>
-		private readonly string target;
-
-		/// <summary>
 		/// Maps original commits to zipped ones.
 		/// </summary>
-		private Dictionary<Commit, Commit> commitMap = new Dictionary<Commit, Commit>();
+		private readonly Dictionary<Commit, Commit> commitMap = new Dictionary<Commit, Commit>();
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public RepoMerger(IEnumerable<Repository> repositories, string target)
+		public RepoZipper(Config config)
 		{
-			this.repositories = repositories;
-			this.target = target;
+			this.config = config;
+			this.repositories = config.Sources?.Select(source => new Repository(source));
 		}
 
 		/// <summary>
@@ -57,9 +55,9 @@ namespace Mpdeimos.GitRepoMerge.Service
 		}
 
 		/// <summary>
-		/// Merges the provided repositories.
+		/// Zips the configured repositories.
 		/// </summary>
-		public Repository Merge()
+		public Repository Zip()
 		{
 			var mergedRepo = MergeRepository();
 			var targetRepo = InitRepository();
@@ -91,22 +89,27 @@ namespace Mpdeimos.GitRepoMerge.Service
 
 		Repository InitRepository()
 		{
-			// TODO (MP) Think about whether this is ok
-			if (Directory.Exists(target))
+			var target = new DirectoryInfo(this.config.Target);
+			if (target.Exists)
 			{
-				foreach (var file in Directory.GetFiles(target))
+				if (!this.config.Force)
 				{
-					File.Delete(file);
+					throw new MergeException("Target directory '" + target + "' already exists.");
 				}
 
-				foreach (var dir in Directory.GetDirectories(target))
+				foreach (var file in target.GetFiles())
 				{
-					Directory.Delete(dir, true);
+					file.Delete();
+				}
+
+				foreach (var dir in target.GetDirectories())
+				{
+					dir.Delete(true);
 				}
 			}
 
-			Repository.Init(target);
-			Repository targetRepo = new Repository(target);
+			Repository.Init(target.FullName);
+			Repository targetRepo = new Repository(target.FullName);
 			foreach (Repository repo in this.repositories)
 			{
 				string name = Path.GetFileName(repo.Info.WorkingDirectory.TrimEnd(Path.DirectorySeparatorChar));

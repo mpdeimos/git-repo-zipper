@@ -27,7 +27,7 @@ namespace Mpdeimos.GitRepoMerge.Util
 		/// <summary>
 		/// Returns the merges into a branch. The key is the merge source commit, the values are the merge target commits.
 		/// </summary>
-		public static Dictionary<Commit, HashSet<Commit>> GetMerges(Repository repo)
+		public static Dictionary<Commit, HashSet<Commit>> GetMergesBySource(Repository repo)
 		{
 			var merges = new Dictionary<Commit, HashSet<Commit>>();
 			foreach (Commit target in GetAllCommits(repo))
@@ -44,6 +44,14 @@ namespace Mpdeimos.GitRepoMerge.Util
 			}
 
 			return merges;
+		}
+
+		/// <summary>
+		/// Returns the merge commits of a repository.
+		/// </summary>
+		public static IEnumerable<Commit> GetMerges(Repository repo)
+		{
+			return GetAllCommits(repo).Where(c => c.Parents.Count() > 1);
 		}
 
 		public static HashSet<Commit> GetAllCommits(Repository repo)

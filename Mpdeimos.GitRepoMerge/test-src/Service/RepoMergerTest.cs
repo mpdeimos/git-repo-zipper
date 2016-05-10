@@ -14,7 +14,7 @@ namespace Mpdeimos.GitRepoMerge.Service
 		[Test]
 		public void TestGetMergedBranches()
 		{
-			var merger = new RepoMerger(new []{ GetTestRepo(TestData.GitTwoSimpleBranchesA) });
+			var merger = new RepoMerger(new []{ GetTestRepo(TestData.GitTwoSimpleBranchesA) }, null);
 			Assert.That(merger.GetMergedBranches(), Is.EquivalentTo(new [] {
 				"master",
 				"1"
@@ -24,7 +24,7 @@ namespace Mpdeimos.GitRepoMerge.Service
 		[Test]
 		public void TestFailOrphanedBranch()
 		{
-			var merger = new RepoMerger(new []{ GetTestRepo(TestData.GitOrphanedBranch) });
+			var merger = new RepoMerger(new []{ GetTestRepo(TestData.GitOrphanedBranch) }, null);
 			Assert.Throws<MergeException>(() => merger.Merge());
 		}
 	}

@@ -95,7 +95,7 @@ namespace Mpdeimos.GitRepoMerge.Util
 			Assert.That(RepoUtil.GetAllCommits(repo).Select(c => c.Sha).ToArray(), Is.EquivalentTo(expected));
 		}
 
-		public static readonly object[] TestGetMergesTestData = {
+		public static readonly object[] TestGetMergesBySourceTestData = {
 			new object [] {
 				TestData.GitTwoSimpleBranchesA, 
 				new Dictionary<string, HashSet<string>> {
@@ -158,10 +158,10 @@ namespace Mpdeimos.GitRepoMerge.Util
 			}
 		};
 
-		[Test, TestCaseSource(nameof(TestGetMergesTestData))]
-		public void TestGetMerges(string path, Dictionary<string, HashSet<string>> expected)
+		[Test, TestCaseSource(nameof(TestGetMergesBySourceTestData))]
+		public void TestGetMergesBySource(string path, Dictionary<string, HashSet<string>> expected)
 		{
-			var merges = RepoUtil.GetMerges(GetTestRepo(path));
+			var merges = RepoUtil.GetMergesBySource(GetTestRepo(path));
 			Assert.That(merges.Keys.Select(c => c.Sha), Is.EquivalentTo(expected.Keys), "Merge sources do not match");
 			foreach (Commit source in merges.Keys)
 			{

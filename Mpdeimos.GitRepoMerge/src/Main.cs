@@ -1,17 +1,41 @@
 ﻿using System;
 using System.Linq;
 using LibGit2Sharp;
+using Mpdeimos.GitRepoMerge.Util;
+using Mpdeimos.GitRepoMerge.Model;
+using Mpdeimos.GitRepoMerge.Service;
 
 namespace Mpdeimos.GitRepoMerge
 {
 	class MainClass
 	{
-		const string RepoPath = "/home/mpdeimos/workspaces/dotnet/git-repo-merge/Mpdeimos.GitRepoMerge/test-data/gitD/dot_git";
-
 		public static void Main(string[] args)
 		{
-			var repo = new Repository(RepoPath);
-			Console.WriteLine(string.Join(",", repo.Network.Remotes));
+			try
+			{
+				var config = ParseCommandline(args);
+				ZipRepositories(config);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);	
+			}
+		}
+
+		static Config ParseCommandline(string[] args)
+		{
+			if (args.Length < 2)
+			{
+				throw new MergeException("Need to specify target and at least one source repository.");
+			}
+			var config = new Config(args[0], args.Skip(1).ToArray());
+			return config;
+		}
+
+		static void ZipRepositories(Config config)
+		{
+			var merger = new RepoMerger(config.Sources, config.Target);
+			merger.Merge();
 		}
 	}
 }

@@ -1,8 +1,0 @@
-# pack-refs with: peeled fully-peeled 
-fb75bb670e34677a05e3726138af2cd2722508fc refs/heads/1
-fbba0ce4705352623bdc28f24828f8e79f5a54a0 refs/heads/master
-9f9d6e3068f26f00b076b10380764a3519490486 refs/remotes/a/1
-9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8 refs/remotes/a/master
-c3eaaec75fb1dd7e1dcab7f8d2efe8bef83f7100 refs/remotes/b/1
-0033408fbb0366dbda1f6a86ecef041021378e8b refs/remotes/b/master
-fb3e1a686cbbbdbd633e0ef703602c836b578647 refs/remotes/c/master

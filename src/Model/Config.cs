@@ -31,19 +31,13 @@ namespace Mpdeimos.GitRepoZipper.Model
 		}
 
 		/// <summary>
-		/// Constructor for testing purposes.
-		/// </summary>
-		public Config()
-		{
-		}
-
-		/// <summary>
 		/// Constructor for parsing the commandline.
 		/// </summary>
-		/// <param name="args">Arguments.</param>
-		public Config(params string[] args)
+		public static Config FromCommandline(params string[] args)
 		{
-			Parser.Default.ParseArgumentsStrict(args, this);
+			var config = new Config();
+			Parser.Default.ParseArgumentsStrict(args, config);
+			return config;			
 		}
 	}
 }

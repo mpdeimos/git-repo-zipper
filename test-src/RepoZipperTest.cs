@@ -12,18 +12,9 @@ namespace Mpdeimos.GitRepoZipper
 	[TestFixture]
 	public class RepoZipperTest : RepoTestBase
 	{
-		// TODO (MP) Remove this method and move test to other util
-		// TODO (MP) Create GetTestRepoPaths test method
-		[Test]
-		public void TestGetMergedBranches()
-		{
-			var zipper = new RepoZipper(new Config { Sources = new []{ GetTestRepoPath(TestData.GitTwoSimpleBranchesA) } });
-			Assert.That(zipper.GetZippedBranches(), Is.EquivalentTo(new [] {
-				"master",
-				"1"
-			}));
-		}
-
+		/// <summary>
+		/// Tests loading an invalid repository throws and exception.
+		/// </summary>
 		[Test]
 		public void TestInvalidRepos()
 		{
@@ -31,13 +22,14 @@ namespace Mpdeimos.GitRepoZipper
 			Assert.Throws<RepositoryNotFoundException>(() => zipper.Zip());
 		}
 
+		/// <summary>
+		/// Tests that orphaned branches will not be converted.
+		/// </summary>
 		[Test]
 		public void TestFailOrphanedBranch()
 		{
-			var zipper = new RepoZipper(new Config { Sources = new []{ GetTestRepoPath(TestData.GitOrphanedBranch) } });
+			var zipper = new RepoZipper(new Config { Sources = GetTestRepoPaths(TestData.GitOrphanedBranch) });
 			Assert.Throws<ZipperException>(() => zipper.Zip());
 		}
-
 	}
 }
-

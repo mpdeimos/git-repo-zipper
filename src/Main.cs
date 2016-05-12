@@ -12,7 +12,7 @@ namespace Mpdeimos.GitRepoZipper
 		{
 			try
 			{
-				var config = new Config(args);
+				var config = Config.FromCommandline(args);
 				ZipRepositories(config);
 			}
 			catch (Exception e)

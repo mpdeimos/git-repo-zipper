@@ -38,23 +38,6 @@ namespace Mpdeimos.GitRepoZipper
 		}
 
 		/// <summary>
-		/// Returns the names of the merged branches.
-		/// </summary>
-		public IEnumerable<string> GetZippedBranches()
-		{
-			var branches = new HashSet<string>();
-			foreach (var repo in this.repositories)
-			{
-				foreach (var branch in repo.Branches)
-				{
-					branches.Add(branch.FriendlyName);
-				}
-			}
-			
-			return branches;
-		}
-
-		/// <summary>
 		/// Zips the configured repositories.
 		/// </summary>
 		public Repository Zip()

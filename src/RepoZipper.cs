@@ -107,12 +107,12 @@ namespace Mpdeimos.GitRepoZipper
 		private void CherryPickCommits(Repository repo, IEnumerable<Commit> commits, string branchName)
 		{
 			Log("Zipping branch " + branchName + "...");
-			Commit branchPoint = null;
+			Commit previous = null;
 			foreach (Commit original in commits)
 			{
 				if (commitMap.ContainsKey(original))
 				{
-					branchPoint = commitMap[original];
+					previous = commitMap[original];
 					continue;
 				}
 
@@ -120,8 +120,8 @@ namespace Mpdeimos.GitRepoZipper
 
 				if (repo.Branches[branchName] == null)
 				{
-					repo.Checkout(repo.CreateBranch(branchName, branchPoint ?? original));
-					if (branchPoint == null)
+					repo.Checkout(repo.CreateBranch(branchName, previous ?? original));
+					if (previous == null)
 					{
 						commitMap[original] = original;
 						continue;
@@ -137,16 +137,18 @@ namespace Mpdeimos.GitRepoZipper
 
 				try
 				{
-					var result = repo.CherryPick(commit, 
-						             new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When),
-						             options);
+					previous = repo.CherryPick(commit, 
+						new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When),
+						options).Commit;
 					
-					commitMap[original] = null;
 				}
-				catch (EmptyCommitException e)
+				catch (EmptyCommitException)
 				{
+					// TODO (MP) Test this scenario
 					Log("... skipped (empty commit)");
 				}
+
+				commitMap[original] = previous;
 			}
 		}
 

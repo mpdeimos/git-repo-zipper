@@ -94,7 +94,7 @@ namespace Mpdeimos.GitRepoZipper
 			foreach (string name in source.GetBranches())
 			{
 				var commits = source.GetBranch(name);
-				CherryPickCommits(repo, commits, name);
+				CherryPickCommits(repo, commits.ToArray(), name);
 			}
 
 			// TODO (MP) Handle anon branches
@@ -104,19 +104,21 @@ namespace Mpdeimos.GitRepoZipper
 			// TODO (MP) Test
 		}
 
-		private void CherryPickCommits(Repository repo, IEnumerable<Commit> commits, string branchName)
+		private void CherryPickCommits(Repository repo, Commit[] commits, string branchName)
 		{
 			Log("Zipping branch " + branchName + "...");
+			Log("");
 			Commit previous = null;
-			foreach (Commit original in commits)
+			for (int i = 0; i < commits.Length; i++)
 			{
+				var original = commits[i];
 				if (commitMap.ContainsKey(original))
 				{
 					previous = commitMap[original];
 					continue;
 				}
 
-				Log("Zipping commit " + original.Sha);
+				Log((100 * (i + 1) / commits.Length) + "% Zipping commit " + original.Sha, replace: true);
 
 				if (repo.Branches[branchName] == null)
 				{
@@ -180,10 +182,15 @@ namespace Mpdeimos.GitRepoZipper
 			}
 		}
 
-		private void Log(string message)
+		private void Log(string message, bool replace = false)
 		{
 			if (!this.config.Silent)
 			{
+				if (replace)
+				{
+					Console.SetCursorPosition(0, Console.CursorTop - 1);
+				}
+
 				Console.WriteLine(message);
 			}
 		}

@@ -15,6 +15,9 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[OptionArray('i', "input", HelpText = "The input repositories to read from.")]
 		public string[] Sources { get; set; }
 
+		[OptionArray('x', "exclude", HelpText = "The branches to exclude (by friendly name).")]
+		public string[] Exclude { get; set; }
+
 		[Option('f', "force", HelpText = "Forces overriding the output repository.", DefaultValue = false)]
 		public bool Force { get; set; }
 
@@ -23,6 +26,9 @@ namespace Mpdeimos.GitRepoZipper.Model
 
 		[Option('s', "silent", HelpText = "Prevents printing to proggress information to the console.", DefaultValue = false)]
 		public bool Silent { get; set; }
+
+		[Option('r', "retry", HelpText = "Allows resuming an operation if an error occurrs by manually modifying the workspace.", DefaultValue = false)]
+		public bool Retry { get; set; }
 
 		/// <summary>
 		/// The usage help provided from annotated options.

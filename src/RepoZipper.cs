@@ -43,7 +43,7 @@ namespace Mpdeimos.GitRepoZipper
 		public Repository Zip()
 		{
 			Log("Reading repositories...");
-			var zippedRepo = new ZippedRepo(this.repositories);
+			var zippedRepo = new ZippedRepo(this.repositories, this.config.Exclude);
 			Log("Zipping the following branches: " + string.Join(", ", zippedRepo.GetBranches()));
 
 			Log("Initialize target repository...");
@@ -84,6 +84,7 @@ namespace Mpdeimos.GitRepoZipper
 			{
 				string name = Path.GetFileName(repo.Info.WorkingDirectory.TrimEnd(Path.DirectorySeparatorChar));
 				targetRepo.Network.Remotes.Add(name, repo.Info.Path);
+				Log("Fetching " + name + "...");
 				targetRepo.Fetch(name);
 			}
 			return targetRepo;
@@ -130,32 +131,54 @@ namespace Mpdeimos.GitRepoZipper
 					}
 				}
 
-				var commit = repo.Lookup(original.Sha) as Commit;
-				var options = new CherryPickOptions();
-				if (commit.Parents.Count() > 1)
+				var commit = CherryPickCommit(repo, original);
+				if (commit != null)
 				{
-					options.Mainline = 1;
+					previous = commit;
+					commitMap[original] = previous;
+				}
+			}
+		}
+
+		private Commit CherryPickCommit(Repository repo, Commit original)
+		{
+			var commit = repo.Lookup(original.Sha) as Commit;
+			var options = new CherryPickOptions();
+			if (commit.Parents.Count() > 1)
+			{
+				options.Mainline = 1;
+			}
+
+			try
+			{
+				return repo.CherryPick(commit, new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When), options).Commit;
+			}
+			catch (EmptyCommitException)
+			{
+				// TODO (MP) Test this scenario
+				Log("... skipped (empty commit)");
+				return null;
+			}
+			catch (Exception e)
+			{
+				if (!config.Retry)
+				{
+					throw;
 				}
 
-				try
-				{
-					previous = repo.CherryPick(commit, 
-						new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When),
-						options).Commit;
-					
-				}
-				catch (EmptyCommitException)
-				{
-					// TODO (MP) Test this scenario
-					Log("... skipped (empty commit)");
-				}
+				Log("An error occurred: \n" + e);
+				Log("Press any key after fixing conflicts manually.");
+				Console.ReadKey();
 
-				commitMap[original] = previous;
+				return repo.Commit(commit.Message, commit.Author, commit.Author, new CommitOptions {
+					AllowEmptyCommit = true
+				});
 			}
 		}
 
 		void GraftMerges(Repository repo, ZippedRepo source)
 		{
+			Log("Grafting merges...");
 			var merges = source.GetMerges().ToDictionary(merge => commitMap[merge]);
 
 			repo.Refs.RewriteHistory(new RewriteHistoryOptions {

@@ -21,6 +21,9 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[Option('k', "keep", HelpText = "Keeps the remotes to the input repositories.", DefaultValue = false)]
 		public bool Clean { get; set; }
 
+		[Option('s', "silent", HelpText = "Prevents printing to proggress information to the console.", DefaultValue = false)]
+		public bool Silent { get; set; }
+
 		/// <summary>
 		/// The usage help provided from annotated options.
 		/// </summary>

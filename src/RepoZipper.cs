@@ -42,8 +42,14 @@ namespace Mpdeimos.GitRepoZipper
 		/// </summary>
 		public Repository Zip()
 		{
+			Log("Reading repositories...");
 			var zippedRepo = new ZippedRepo(this.repositories);
+			Log("Zipping the following branches: " + string.Join(", ", zippedRepo.GetBranches()));
+
+			Log("Initialize target repository...");
 			var targetRepo = InitTargetRepo();
+
+			Log("Build target repository...");
 			BuildRepository(targetRepo, zippedRepo);
 			return targetRepo;
 		}
@@ -100,6 +106,7 @@ namespace Mpdeimos.GitRepoZipper
 
 		private void CherryPickCommits(Repository repo, IEnumerable<Commit> commits, string branchName)
 		{
+			Log("Zipping branch " + branchName + "...");
 			Commit branchPoint = null;
 			foreach (Commit original in commits)
 			{
@@ -109,6 +116,7 @@ namespace Mpdeimos.GitRepoZipper
 					continue;
 				}
 
+				Log("Zipping commit " + original.Sha);
 
 				if (repo.Branches[branchName] == null)
 				{
@@ -126,10 +134,19 @@ namespace Mpdeimos.GitRepoZipper
 				{
 					options.Mainline = 1;
 				}
-				var result = repo.CherryPick(commit, 
-					             new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When),
-					             options);
-				commitMap[original] = result.Commit;
+
+				try
+				{
+					var result = repo.CherryPick(commit, 
+						             new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When),
+						             options);
+					
+					commitMap[original] = null;
+				}
+				catch (EmptyCommitException e)
+				{
+					Log("... skipped (empty commit)");
+				}
 			}
 		}
 
@@ -158,6 +175,14 @@ namespace Mpdeimos.GitRepoZipper
 			foreach (var @ref in repo.Refs.FromGlob("refs/original/*"))
 			{
 				repo.Refs.Remove(@ref);
+			}
+		}
+
+		private void Log(string message)
+		{
+			if (!this.config.Silent)
+			{
+				Console.WriteLine(message);
 			}
 		}
 	}

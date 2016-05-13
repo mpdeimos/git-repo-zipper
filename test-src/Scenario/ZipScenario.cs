@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mpdeimos.GitRepoZipper
+namespace Mpdeimos.GitRepoZipper.Scenario
 {
 	public class ZipScenario
 	{
 		public string[] Sources { get; private set; }
 
 		public Dictionary<string, string[]> Branches { get; } = new Dictionary<string, string[]>();
+
+		public SimpleCommit[] Merges { get; set; } = {};
 
 		public string[] this[string name] { set { this.Branches[name] = value; } }
 
@@ -31,6 +33,11 @@ namespace Mpdeimos.GitRepoZipper
 						["1" ] = new[] {
 							"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
 							"9f9d6e3068f26f00b076b10380764a3519490486",
+						},
+						Merges = new[] {new SimpleCommit(
+								"9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8",
+								"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
+								"9f9d6e3068f26f00b076b10380764a3519490486")
 						}
 					},
 					new ZipScenario(TestData.GitTwoSimpleBranchesA, TestData.GitTwoSimpleBranchesB) { 
@@ -48,6 +55,16 @@ namespace Mpdeimos.GitRepoZipper
 							"26074c825ec2a948d19ffd69e71b333ee5e62f70",
 							"9f9d6e3068f26f00b076b10380764a3519490486",
 							"c3eaaec75fb1dd7e1dcab7f8d2efe8bef83f7100",
+						},
+						Merges = new[] {
+							new SimpleCommit(
+								"9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8",
+								"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
+								"9f9d6e3068f26f00b076b10380764a3519490486"),
+							new SimpleCommit(
+								"0033408fbb0366dbda1f6a86ecef041021378e8b",
+								"4168bb0842f025ddb7975ebbd9a9bd7081555a6a",
+								"c3eaaec75fb1dd7e1dcab7f8d2efe8bef83f7100")
 						}
 					},
 					new ZipScenario(TestData.GitTwoSimpleBranchesA, TestData.GitTwoSimpleBranchesB, TestData.GitTwoSimpleBranchesC) { 
@@ -67,6 +84,16 @@ namespace Mpdeimos.GitRepoZipper
 							"26074c825ec2a948d19ffd69e71b333ee5e62f70",
 							"9f9d6e3068f26f00b076b10380764a3519490486",
 							"c3eaaec75fb1dd7e1dcab7f8d2efe8bef83f7100",
+						},
+						Merges = new[] {
+							new SimpleCommit(
+								"9d46d63c3345bab7f9fafaa5fdf13f3c04bbe2b8",
+								"34fbde4c98cc29773cd3483aa44c26d5cca816f5",
+								"9f9d6e3068f26f00b076b10380764a3519490486"),
+							new SimpleCommit(
+								"0033408fbb0366dbda1f6a86ecef041021378e8b",
+								"4168bb0842f025ddb7975ebbd9a9bd7081555a6a",
+								"c3eaaec75fb1dd7e1dcab7f8d2efe8bef83f7100")
 						}
 					}
 				};

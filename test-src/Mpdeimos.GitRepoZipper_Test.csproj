@@ -56,7 +56,9 @@
     <Compile Include="Util\RepoUtilTest.cs" />
     <Compile Include="RepoZipperTest.cs" />
     <Compile Include="Model\ZippedBranchTest.cs" />
-    <Compile Include="ZipScenario.cs" />
+    <Compile Include="Model\ZippedRepoTest.cs" />
+    <Compile Include="Scenario\ZipScenario.cs" />
+    <Compile Include="Scenario\SimpleCommit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="LibGit2Sharp">
@@ -84,5 +86,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Util\" />
+    <Folder Include="Scenario\" />
   </ItemGroup>
 </Project>

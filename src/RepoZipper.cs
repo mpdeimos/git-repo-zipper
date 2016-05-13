@@ -42,35 +42,16 @@ namespace Mpdeimos.GitRepoZipper
 		/// </summary>
 		public Repository Zip()
 		{
-			var zippedRepo = ZipRepository();
-			var targetRepo = InitRepository();
+			var zippedRepo = new ZippedRepo(this.repositories);
+			var targetRepo = InitTargetRepo();
 			BuildRepository(targetRepo, zippedRepo);
 			return targetRepo;
 		}
 
-		private ZippedRepo ZipRepository()
-		{
-			var zippedRepo = new ZippedRepo();
-			foreach (var repo in this.repositories)
-			{
-				Commit commonRoot = null;
-				foreach (var branch in repo.Branches.Where(b => b.IsRemote == false))
-				{
-					List<Commit> commits = zippedRepo.AddBranch(branch.FriendlyName, branch);
-					if (commonRoot == null)
-					{
-						commonRoot = commits.First();
-					}
-					if (commits.First() != commonRoot)
-					{
-						throw new ZipperException("Cannot zip repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
-					}
-				}
-			}
-			return zippedRepo;
-		}
-
-		Repository InitRepository()
+		/// <summary>
+		/// Initializes the target repository.
+		/// </summary>
+		private Repository InitTargetRepo()
 		{
 			var target = new DirectoryInfo(this.config.Target);
 			if (target.Exists)
@@ -181,4 +162,3 @@ namespace Mpdeimos.GitRepoZipper
 		}
 	}
 }
-

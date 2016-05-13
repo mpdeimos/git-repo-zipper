@@ -27,9 +27,32 @@ namespace Mpdeimos.GitRepoZipper.Model
 		private Dictionary<string, ZippedBranch> Branches = new Dictionary<string, ZippedBranch>();
 
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ZippedRepo(IEnumerable<Repository> repositories)
+		{
+			foreach (var repo in repositories)
+			{
+				Commit commonRoot = null;
+				foreach (var branch in repo.Branches.Where(b => b.IsRemote == false))
+				{
+					List<Commit> commits = RecordBranch(branch.FriendlyName, branch);
+					if (commonRoot == null)
+					{
+						commonRoot = commits.First();
+					}
+					if (commits.First() != commonRoot)
+					{
+						throw new ZipperException("Cannot zip repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
+					}
+				}
+			}
+		}
+
+		/// <summary>
 		/// Adds a branch to the zipped repository. Returns the commits in oldes-to-newest order.
 		/// </summary>
-		public List<Commit> AddBranch(string name, Branch branch)
+		public List<Commit> RecordBranch(string name, Branch branch)
 		{
 			if (!this.Branches.ContainsKey(name))
 			{

@@ -21,15 +21,5 @@ namespace Mpdeimos.GitRepoZipper
 			var zipper = new RepoZipper(new Config{ Sources = new []{ "/non/existing" } });
 			Assert.Throws<RepositoryNotFoundException>(() => zipper.Zip());
 		}
-
-		/// <summary>
-		/// Tests that orphaned branches will not be converted.
-		/// </summary>
-		[Test]
-		public void TestFailOrphanedBranch()
-		{
-			var zipper = new RepoZipper(new Config { Sources = GetTestRepoPaths(TestData.GitOrphanedBranch) });
-			Assert.Throws<ZipperException>(() => zipper.Zip());
-		}
 	}
 }

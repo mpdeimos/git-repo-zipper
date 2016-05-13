@@ -22,7 +22,7 @@ namespace Mpdeimos.GitRepoZipper
 		}
 
 		/// <summary>
-		/// Gets the path to a test repository.
+		/// Gets the paths to the test repositories.
 		/// </summary>
 		protected static string[] GetTestRepoPaths(params string[] names)
 		{
@@ -35,6 +35,22 @@ namespace Mpdeimos.GitRepoZipper
 		protected static Repository GetTestRepo(string name)
 		{
 			return new Repository(GetTestRepoPath(name));
+		}
+
+		/// <summary>
+		/// Gets the test repositories.
+		/// </summary>
+		protected static IEnumerable<Repository> GetTestRepos(params string[] names)
+		{
+			return names.Select(GetTestRepo);
+		}
+
+		/// <summary>
+		/// Returns the Sha of a commit.
+		/// </summary>
+		protected static string Sha(Commit commit)
+		{
+			return commit.Sha;
 		}
 	}
 }

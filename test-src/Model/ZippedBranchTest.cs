@@ -1,8 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
-using Mpdeimos.GitRepoZipper.Util;
 using System.Linq;
 using System.Collections.Generic;
+using Mpdeimos.GitRepoZipper.Scenario;
 
 namespace Mpdeimos.GitRepoZipper.Model
 {

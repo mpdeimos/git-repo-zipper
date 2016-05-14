@@ -113,13 +113,13 @@ namespace Mpdeimos.GitRepoZipper
 			for (int i = 0; i < commits.Length; i++)
 			{
 				var original = commits[i];
+				Log((100 * (i + 1) / commits.Length) + "% Zipping commit " + original.Sha, replace: true);
+
 				if (commitMap.ContainsKey(original))
 				{
 					previous = commitMap[original];
 					continue;
 				}
-
-				Log((100 * (i + 1) / commits.Length) + "% Zipping commit " + original.Sha, replace: true);
 
 				if (repo.Branches[branchName] == null)
 				{
@@ -179,17 +179,26 @@ namespace Mpdeimos.GitRepoZipper
 		void GraftMerges(Repository repo, ZippedRepo source)
 		{
 			Log("Grafting merges...");
-			var merges = source.GetMerges().ToDictionary(merge => commitMap[merge]);
+			var allMerges = source.GetMerges().ToList();
+			var knownMerges = allMerges.Where(commitMap.ContainsKey).ToList();
+			Log("Unknown merges: " + string.Join(", ", allMerges.RemoveAll(knownMerges.Contains)));
+			var originalMerges = knownMerges.ToDictionary(merge => commitMap[merge]);
 
 			repo.Refs.RewriteHistory(new RewriteHistoryOptions {
 				CommitParentsRewriter = commit =>
 				{
-					if (!merges.ContainsKey(commit))
+					if (!originalMerges.ContainsKey(commit))
 					{
 						return commit.Parents;
 					}
 
-					Commit[] parents = merges[commit].Parents.Select(parent => commitMap[parent]).ToArray();
+					Commit[] parents = originalMerges[commit].Parents
+										.Where(commitMap.ContainsKey)
+										.Select(parent => commitMap[parent]).ToArray();
+					if (!parents.Any())
+					{
+						return commit.Parents;
+					}
 
 					// ensure to take first zipped parent
 					parents[0] = commit.Parents.First();

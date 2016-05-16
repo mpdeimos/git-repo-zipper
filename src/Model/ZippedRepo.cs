@@ -44,7 +44,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 					}
 					if (commits.First() != commonRoot)
 					{
-						throw new ZipperException("Cannot zip repositories with multiple roots. See https://github.com/mpdeimos/git-repo-merge/issues/1 for details.");
+						throw new ZipperException("Cannot zip repositories with multiple roots: " + repo.Info.Path + " branch: " + branch.FriendlyName);
 					}
 				}
 			}

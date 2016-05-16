@@ -29,11 +29,17 @@ namespace Mpdeimos.GitRepoZipper
 		private readonly Dictionary<Commit, Commit> commitMap = new Dictionary<Commit, Commit>();
 
 		/// <summary>
+		/// The logger.
+		/// </summary>
+		private readonly Logger logger;
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public RepoZipper(Config config)
 		{
 			this.config = config;
+			this.logger = new Logger{ Silent = config.Silent };
 			this.repositories = config.Sources?.Select(source => new Repository(source));
 		}
 
@@ -42,14 +48,14 @@ namespace Mpdeimos.GitRepoZipper
 		/// </summary>
 		public Repository Zip()
 		{
-			Log("Reading repositories...");
+			this.logger.Log("Reading repositories...");
 			var zippedRepo = new ZippedRepo(this.repositories, this.config.Exclude);
-			Log("Zipping the following branches: " + string.Join(", ", zippedRepo.GetBranches()));
+			this.logger.Log("Zipping the following branches: " + string.Join(", ", zippedRepo.GetBranches()));
 
-			Log("Initialize target repository...");
+			this.logger.Log("Initialize target repository...");
 			var targetRepo = InitTargetRepo();
 
-			Log("Build target repository...");
+			this.logger.Log("Build target repository...");
 			BuildRepository(targetRepo, zippedRepo);
 			return targetRepo;
 		}
@@ -84,7 +90,7 @@ namespace Mpdeimos.GitRepoZipper
 			{
 				string name = Path.GetFileName(repo.Info.WorkingDirectory.TrimEnd(Path.DirectorySeparatorChar));
 				targetRepo.Network.Remotes.Add(name, repo.Info.Path);
-				Log("Fetching " + name + "...");
+				this.logger.Log("Fetching " + name + "...");
 				targetRepo.Fetch(name);
 			}
 			return targetRepo;
@@ -107,13 +113,13 @@ namespace Mpdeimos.GitRepoZipper
 
 		private void CherryPickCommits(Repository repo, Commit[] commits, string branchName)
 		{
-			Log("Zipping branch " + branchName + "...");
-			Log("");
+			this.logger.Log("Zipping branch " + branchName + "...");
+			this.logger.Log("");
 			Commit previous = null;
 			for (int i = 0; i < commits.Length; i++)
 			{
 				var original = commits[i];
-				Log((100 * (i + 1) / commits.Length) + "% Zipping commit " + original.Sha, replace: true);
+				this.logger.Log((100 * (i + 1) / commits.Length) + "% Zipping commit " + original.Sha, replace: true);
 
 				if (commitMap.ContainsKey(original))
 				{
@@ -156,7 +162,7 @@ namespace Mpdeimos.GitRepoZipper
 			catch (EmptyCommitException)
 			{
 				// TODO (MP) Test this scenario
-				Log("... skipped (empty commit)");
+				this.logger.Log("... skipped (empty commit)");
 				return null;
 			}
 			catch (Exception e)
@@ -166,8 +172,8 @@ namespace Mpdeimos.GitRepoZipper
 					throw;
 				}
 
-				Log("An error occurred: \n" + e);
-				Log("Press any key after fixing conflicts manually.");
+				this.logger.Log("An error occurred: \n" + e);
+				this.logger.Log("Press any key after fixing conflicts manually.");
 				Console.ReadKey();
 
 				return repo.Commit(commit.Message, commit.Author, commit.Author, new CommitOptions {
@@ -178,15 +184,19 @@ namespace Mpdeimos.GitRepoZipper
 
 		void GraftMerges(Repository repo, ZippedRepo source)
 		{
-			Log("Grafting merges...");
+			this.logger.Log("Grafting merges...");
 			var allMerges = source.GetMerges().ToList();
 			var knownMerges = allMerges.Where(commitMap.ContainsKey).ToList();
-			Log("Unknown merges: " + string.Join(", ", allMerges.RemoveAll(knownMerges.Contains)));
+			this.logger.Log("Unknown merges: " + string.Join(", ", allMerges.Except(knownMerges)));
 			var originalMerges = knownMerges.ToDictionary(merge => commitMap[merge]);
 
+			this.logger.Log(string.Empty);
+			var commits = RepoUtil.GetAllCommits(repo);
+			int count = 0;
 			repo.Refs.RewriteHistory(new RewriteHistoryOptions {
 				CommitParentsRewriter = commit =>
 				{
+					this.logger.Log((100 * ++count / commits.Count) + "% Grafting commit " + commit.Sha, replace: true);
 					if (!originalMerges.ContainsKey(commit))
 					{
 						return commit.Parents;
@@ -205,25 +215,12 @@ namespace Mpdeimos.GitRepoZipper
 
 					return parents;
 				}
-			}, RepoUtil.GetAllCommits(repo));
+			}, commits);
 
 			// cleanup original refs
 			foreach (var @ref in repo.Refs.FromGlob("refs/original/*"))
 			{
 				repo.Refs.Remove(@ref);
-			}
-		}
-
-		private void Log(string message, bool replace = false)
-		{
-			if (!this.config.Silent)
-			{
-				if (replace)
-				{
-					Console.SetCursorPosition(0, Console.CursorTop - 1);
-				}
-
-				Console.WriteLine(message);
 			}
 		}
 	}

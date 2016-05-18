@@ -234,18 +234,5 @@ namespace Mpdeimos.GitRepoZipper
 				repo.Refs.Remove(@ref);
 			}
 		}
-
-		/// <summary>
-		/// Returns the zipped commit of an original commit.
-		/// </summary>
-		internal Commit GeZippedCommit(Commit commit)
-		{
-			if (!this.commitMap.ContainsKey(commit))
-			{
-				return null;
-			}
-
-			return this.commitMap[commit];
-		}
 	}
 }

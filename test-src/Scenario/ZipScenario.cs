@@ -11,7 +11,7 @@ namespace Mpdeimos.GitRepoZipper.Scenario
 
 		public SimpleCommit[] Merges { get; set; } = {};
 
-		public string[] this[string name] { set { this.Branches[name] = value; } }
+		private string[] this[string name] { set { this.Branches[name] = value; } }
 
 		public ZipScenario(params string[] sources)
 		{

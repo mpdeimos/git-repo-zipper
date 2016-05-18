@@ -34,7 +34,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 		}
 
 		/// <summary>
-		/// Tests that orphaned cannot be zipped (yet).
+		/// Tests getting merges of a zipped repo.
 		/// </summary>
 		[Test, TestCaseSource(nameof(TestCaseData))]
 		public void TestGetMerges(ZipScenario scenario)

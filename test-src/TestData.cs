@@ -56,6 +56,28 @@ namespace Mpdeimos.GitRepoZipper
 			Assert.IsTrue(System.IO.Directory.Exists(path), $"No valid directory: {path}");
 			return path;
 		}
+
+		/// <summary>
+		/// Gets the path to a named test directory. Ensures that the directory exists and is empty.
+		/// </summary>
+		public string GetCleanTempDir(string name)
+		{
+			string path = Path.Combine(Directory.FullName, "tmp", name);
+			if (System.IO.Directory.Exists(path))
+			{
+				System.IO.Directory.Delete(path, true);
+			}
+			System.IO.Directory.CreateDirectory(path);
+			return path;
+		}
+
+		/// <summary>
+		/// Gets the path to a test directory named according to the test case. Ensures that the directory exists and is empty.
+		/// </summary>
+		public string GetCleanTempDir()
+		{
+			return GetCleanTempDir(TestContext.CurrentContext.Test.FullName);
+		}
 	}
 }
 

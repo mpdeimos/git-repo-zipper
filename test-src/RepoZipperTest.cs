@@ -45,7 +45,8 @@ namespace Mpdeimos.GitRepoZipper
 			var config = new Config {
 				Sources = GetTestRepoPaths(scenario.Sources),
 				Target = TestData.GetCleanTempDir(),
-				Force = true
+				Force = true,
+				Silent = true
 			};
 			var zipper = new RepoZipper(config);
 			var repo = zipper.Zip();
@@ -62,6 +63,8 @@ namespace Mpdeimos.GitRepoZipper
 					"Commits do not match for branch: " + branch.FriendlyName
 				);
 			}
+
+			// TODO test merges
 		}
 	}
 }

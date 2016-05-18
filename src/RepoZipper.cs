@@ -114,7 +114,6 @@ namespace Mpdeimos.GitRepoZipper
 		private void CherryPickCommits(Repository repo, Commit[] commits, string branchName)
 		{
 			this.logger.Log("Zipping branch " + branchName + "...");
-			this.logger.Log("");
 			Commit previous = null;
 			for (int i = 0; i < commits.Length; i++)
 			{
@@ -123,9 +122,19 @@ namespace Mpdeimos.GitRepoZipper
 
 				if (commitMap.ContainsKey(original))
 				{
-					previous = commitMap[original];
+					if (repo.Branches[branchName] == null)
+					{
+						previous = commitMap[original];
+					}
+					else
+					{
+						// FIXME This should ideally be done by rearranging the history
+						this.logger.Log("... cherry-picked");
+						previous = CherryPickCommit(repo, original);
+					}
 					continue;
 				}
+
 
 				if (repo.Branches[branchName] == null)
 				{
@@ -137,12 +146,8 @@ namespace Mpdeimos.GitRepoZipper
 					}
 				}
 
-				var commit = CherryPickCommit(repo, original);
-				if (commit != null)
-				{
-					previous = commit;
-					commitMap[original] = previous;
-				}
+				previous = CherryPickCommit(repo, original);
+				commitMap[original] = previous;
 			}
 		}
 
@@ -161,9 +166,7 @@ namespace Mpdeimos.GitRepoZipper
 			}
 			catch (EmptyCommitException)
 			{
-				// TODO (MP) Test this scenario
-				this.logger.Log("... skipped (empty commit)");
-				return null;
+				return this.CommitWorktree(repo, commit);
 			}
 			catch (Exception e)
 			{
@@ -173,13 +176,22 @@ namespace Mpdeimos.GitRepoZipper
 				}
 
 				this.logger.Log("An error occurred: \n" + e);
-				this.logger.Log("Press any key after fixing conflicts manually.");
+				this.logger.Log("Press any key after fixing conflicts manually.", true);
 				Console.ReadKey();
 
-				return repo.Commit(commit.Message, commit.Author, commit.Author, new CommitOptions {
-					AllowEmptyCommit = true
-				});
+				return this.CommitWorktree(repo, commit);
 			}
+		}
+
+		/// <summary>
+		/// Commits the worktree with the commit meta data from the given commit.
+		/// This allows creating an empty commit.
+		/// </summary>
+		private Commit CommitWorktree(Repository repo, Commit commit)
+		{
+			return repo.Commit(commit.Message, commit.Author, commit.Author, new CommitOptions {
+				AllowEmptyCommit = true
+			});
 		}
 
 		void GraftMerges(Repository repo, ZippedRepo source)
@@ -190,7 +202,6 @@ namespace Mpdeimos.GitRepoZipper
 			this.logger.Log("Unknown merges: " + string.Join(", ", allMerges.Except(knownMerges)));
 			var originalMerges = knownMerges.ToDictionary(merge => commitMap[merge]);
 
-			this.logger.Log(string.Empty);
 			var commits = RepoUtil.GetAllCommits(repo);
 			int count = 0;
 			repo.Refs.RewriteHistory(new RewriteHistoryOptions {
@@ -222,6 +233,19 @@ namespace Mpdeimos.GitRepoZipper
 			{
 				repo.Refs.Remove(@ref);
 			}
+		}
+
+		/// <summary>
+		/// Returns the zipped commit of an original commit.
+		/// </summary>
+		internal Commit GeZippedCommit(Commit commit)
+		{
+			if (!this.commitMap.ContainsKey(commit))
+			{
+				return null;
+			}
+
+			return this.commitMap[commit];
 		}
 	}
 }

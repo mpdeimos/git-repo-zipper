@@ -49,7 +49,7 @@ namespace Mpdeimos.GitRepoZipper
 		public Repository Zip()
 		{
 			this.logger.Log("Reading repositories...");
-			var zippedRepo = new ZippedRepo(this.repositories, this.config.Exclude);
+			var zippedRepo = new ZippedRepo(this.repositories, this.config);
 			this.logger.Log("Zipping the following branches: " + string.Join(", ", zippedRepo.GetBranches()));
 
 			this.logger.Log("Initialize target repository...");

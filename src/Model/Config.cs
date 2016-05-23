@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CommandLine;
 using CommandLine.Text;
+using System.Text.RegularExpressions;
 
 namespace Mpdeimos.GitRepoZipper.Model
 {
@@ -15,8 +16,14 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[OptionArray('i', "input", HelpText = "The input repositories to read from.")]
 		public string[] Sources { get; set; }
 
-		[OptionArray('x', "exclude", HelpText = "The branches to exclude (by friendly name).")]
+		[OptionArray('b', "include", HelpText = "The branches to include (by friendly name, regex).")]
+		public string[] Include { get; set; }
+
+		[OptionArray('x', "exclude", HelpText = "The branches to exclude (by friendly name, regex).")]
 		public string[] Exclude { get; set; }
+
+		[Option('r', "remote", HelpText = "Include remote branches.", DefaultValue = false)]
+		public bool Remote { get; set; }
 
 		[Option('f', "force", HelpText = "Forces overriding the output repository.", DefaultValue = false)]
 		public bool Force { get; set; }
@@ -48,6 +55,29 @@ namespace Mpdeimos.GitRepoZipper.Model
 			Parser.Default.ParseArgumentsStrict(args, config);
 			return config;			
 		}
+
+		/// <summary>
+		/// Returns whether a branch is included by this configuration.
+		/// </summary>
+		public bool IsBranchIncluded(Branch branch)
+		{
+			if (!this.Remote && branch.IsRemote)
+			{
+				return false;
+			}
+
+
+			if (this.Include != null && !this.Include.Any(include => Regex.IsMatch(branch.FriendlyName, include)))
+			{
+				return false;				
+			}
+
+			if (this.Exclude != null && this.Exclude.Any(exclude => Regex.IsMatch(branch.FriendlyName, exclude)))
+			{
+				return false;
+			}
+				
+			return true;
+		}
 	}
 }
-

@@ -29,13 +29,14 @@ namespace Mpdeimos.GitRepoZipper.Model
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ZippedRepo(IEnumerable<Repository> repositories, string[] excludes = null)
+		public ZippedRepo(IEnumerable<Repository> repositories, Config config = null)
 		{
+			config = config ?? new Config();
+
 			foreach (var repo in repositories)
 			{
 				Commit commonRoot = null;
-				foreach (var branch in repo.Branches.Where(b => !b.IsRemote
-					&& (excludes == null || !excludes.Contains(b.FriendlyName))))
+				foreach (var branch in repo.Branches.Where(config.IsBranchIncluded))
 				{
 					List<Commit> commits = RecordBranch(branch.FriendlyName, branch);
 					if (commonRoot == null)

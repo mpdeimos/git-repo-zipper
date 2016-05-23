@@ -55,7 +55,7 @@ namespace Mpdeimos.GitRepoZipper
 			this.logger.Log("Initialize target repository...");
 			var targetRepo = InitTargetRepo();
 
-			this.logger.Log("Build target repository...");
+			this.logger.Log("Building target repository...");
 			BuildRepository(targetRepo, zippedRepo);
 			return targetRepo;
 		}
@@ -202,16 +202,12 @@ namespace Mpdeimos.GitRepoZipper
 			this.logger.Log("Unknown merges: " + string.Join(", ", allMerges.Except(knownMerges)));
 			var originalMerges = knownMerges.ToDictionary(merge => commitMap[merge.Sha]);
 
-			var commits = RepoUtil.GetAllCommits(repo);
 			int count = 0;
+			this.logger.Log("0% Grafting " + originalMerges.Keys.Count + " commits", replace: true);
 			repo.Refs.RewriteHistory(new RewriteHistoryOptions {
 				CommitParentsRewriter = commit =>
 				{
-					this.logger.Log((100 * ++count / commits.Count) + "% Grafting commit " + commit.Sha, replace: true);
-					if (!originalMerges.ContainsKey(commit))
-					{
-						return commit.Parents;
-					}
+					this.logger.Log((100 * ++count / originalMerges.Keys.Count) + "% Grafting commit " + commit.Sha, replace: true);
 
 					Commit[] parents = originalMerges[commit].Parents
 						.Where(m => commitMap.ContainsKey(m.Sha))
@@ -226,7 +222,7 @@ namespace Mpdeimos.GitRepoZipper
 
 					return parents;
 				}
-			}, commits);
+			}, originalMerges.Keys);
 
 			// cleanup original refs
 			foreach (var @ref in repo.Refs.FromGlob("refs/original/*"))

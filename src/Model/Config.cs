@@ -22,7 +22,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[OptionArray('x', "exclude", HelpText = "The branches to exclude (by friendly name, regex).")]
 		public string[] Exclude { get; set; }
 
-		[Option('r', "remote", HelpText = "Include remote branches.", DefaultValue = false)]
+		[Option("remote", HelpText = "Include remote branches.", DefaultValue = false)]
 		public bool Remote { get; set; }
 
 		[Option('f', "force", HelpText = "Forces overriding the output repository.", DefaultValue = false)]

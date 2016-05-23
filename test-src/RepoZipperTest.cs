@@ -62,9 +62,22 @@ namespace Mpdeimos.GitRepoZipper
 					Is.EqualTo(scenario.Branches[branch.FriendlyName].Select(sha => (repo.Lookup(sha) as Commit).Message)),
 					"Commits do not match for branch: " + branch.FriendlyName
 				);
+
 			}
 
-			// TODO test merges
+			// TODO this may be unified with ZippedRepoTest
+			var merges = RepoUtil.GetMerges(branches.Select(b => b.Tip)).ToList(); // just retrieve merges for zipped branches
+			Assert.That(merges.Select(m => m.Message), Is.EquivalentTo(scenario.Merges.Select(c => Lookup(repo, c.Sha).Message)));
+
+			// We have to skip the 1st parent as this one may be different
+			var actual = merges.Select(c => c.Parents.Skip(1).Select(p => p.Message));
+			var expected = scenario.Merges.Select(c => c.Parents.Skip(1).Select(p => Lookup(repo, p).Message));
+			Assert.That(actual, Is.EquivalentTo(expected));
+		}
+
+		private static Commit Lookup(Repository repo, string sha)
+		{
+			return repo.Lookup(sha) as Commit;
 		}
 	}
 }

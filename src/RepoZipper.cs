@@ -26,7 +26,7 @@ namespace Mpdeimos.GitRepoZipper
 		/// <summary>
 		/// Maps original commits to zipped ones.
 		/// </summary>
-		private readonly Dictionary<Commit, Commit> commitMap = new Dictionary<Commit, Commit>();
+		private readonly Dictionary<string, Commit> commitMap = new Dictionary<string, Commit>();
 
 		/// <summary>
 		/// The logger.
@@ -120,11 +120,11 @@ namespace Mpdeimos.GitRepoZipper
 				var original = commits[i];
 				this.logger.Log((100 * (i + 1) / commits.Length) + "% Zipping commit " + original.Sha, replace: true);
 
-				if (commitMap.ContainsKey(original))
+				if (commitMap.ContainsKey(original.Sha))
 				{
 					if (repo.Branches[branchName] == null)
 					{
-						previous = commitMap[original];
+						previous = commitMap[original.Sha];
 					}
 					else
 					{
@@ -141,13 +141,13 @@ namespace Mpdeimos.GitRepoZipper
 					repo.Checkout(repo.CreateBranch(branchName, previous ?? original));
 					if (previous == null)
 					{
-						commitMap[original] = original;
+						commitMap[original.Sha] = original;
 						continue;
 					}
 				}
 
 				previous = CherryPickCommit(repo, original);
-				commitMap[original] = previous;
+				commitMap[original.Sha] = previous;
 			}
 		}
 
@@ -198,9 +198,9 @@ namespace Mpdeimos.GitRepoZipper
 		{
 			this.logger.Log("Grafting merges...");
 			var allMerges = source.GetMerges().ToList();
-			var knownMerges = allMerges.Where(commitMap.ContainsKey).ToList();
+			var knownMerges = allMerges.Where(m => commitMap.ContainsKey(m.Sha)).ToList();
 			this.logger.Log("Unknown merges: " + string.Join(", ", allMerges.Except(knownMerges)));
-			var originalMerges = knownMerges.ToDictionary(merge => commitMap[merge]);
+			var originalMerges = knownMerges.ToDictionary(merge => commitMap[merge.Sha]);
 
 			var commits = RepoUtil.GetAllCommits(repo);
 			int count = 0;
@@ -214,8 +214,8 @@ namespace Mpdeimos.GitRepoZipper
 					}
 
 					Commit[] parents = originalMerges[commit].Parents
-										.Where(commitMap.ContainsKey)
-										.Select(parent => commitMap[parent]).ToArray();
+						.Where(m => commitMap.ContainsKey(m.Sha))
+						.Select(parent => commitMap[parent.Sha]).ToArray();
 					if (!parents.Any())
 					{
 						return commit.Parents;

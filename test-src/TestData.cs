@@ -62,7 +62,7 @@ namespace Mpdeimos.GitRepoZipper
 		/// </summary>
 		public string GetCleanTempDir(string name)
 		{
-			string path = Path.Combine(Directory.FullName, "tmp", name);
+			string path = Path.Combine(Directory.FullName, "test-tmp", name);
 			if (System.IO.Directory.Exists(path))
 			{
 				System.IO.Directory.Delete(path, true);

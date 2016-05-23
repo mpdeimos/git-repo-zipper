@@ -51,18 +51,31 @@ namespace Mpdeimos.GitRepoZipper.Util
 		/// </summary>
 		public static IEnumerable<Commit> GetMerges(Repository repo)
 		{
-			return GetAllCommits(repo).Where(c => c.Parents.Count() > 1);
+			return GetMerges(GetReferenccedCommits(repo));
 		}
 
-		public static HashSet<Commit> GetAllCommits(Repository repo)
+		/// <summary>
+		/// Returns the merge commits of all commits referenced by the given commits.
+		/// </summary>
+		public static IEnumerable<Commit> GetMerges(IEnumerable<Commit> heads)
+		{
+			return GetAllCommits(heads).Where(c => c.Parents.Count() > 1);
+		}
+
+		public static HashSet<Commit> GetAllCommits(IEnumerable<Commit> heads)
 		{
 			var commits = new HashSet<Commit>();
-			foreach (Commit rootRef in GetReferenccedCommits(repo))
+			foreach (Commit rootRef in heads)
 			{
 				CollectCommits(commits, rootRef);
 			}
 
 			return commits;
+		}
+
+		public static HashSet<Commit> GetAllCommits(Repository repo)
+		{
+			return GetAllCommits(GetReferenccedCommits(repo));
 		}
 
 		private static void CollectCommits(HashSet<Commit> commits, Commit commit)
@@ -82,4 +95,3 @@ namespace Mpdeimos.GitRepoZipper.Util
 		}
 	}
 }
-

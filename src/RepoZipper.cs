@@ -106,9 +106,10 @@ namespace Mpdeimos.GitRepoZipper
 
 			// TODO (MP) Handle anon branches
 
-			GraftMerges(repo, source);
-
-			// TODO (MP) Test
+			if (!this.config.NoMerges)
+			{
+				GraftMerges(repo, source);
+			}
 		}
 
 		private void CherryPickCommits(Repository repo, Commit[] commits, string branchName)

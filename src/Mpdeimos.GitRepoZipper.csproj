@@ -24,7 +24,7 @@
         <Variable name="LD_PRELOAD" value="libcurl.so.3" />
       </EnvironmentVariables>
     </EnvironmentVariables>
-    <Commandlineparameters>-b ".+" -f -o "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/test" -i "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesA" "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesB"</Commandlineparameters>
+    <Commandlineparameters>-n -b ".+" -f -o "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/test" -i "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesA" "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesB"</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
@@ -59,6 +59,7 @@
     <Compile Include="Model\ZippedBranch.cs" />
     <Compile Include="Model\ZippedRepo.cs" />
     <Compile Include="Util\Logger.cs" />
+    <Compile Include="Model\DryRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props')" />

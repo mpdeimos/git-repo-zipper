@@ -46,15 +46,15 @@ namespace Mpdeimos.GitRepoZipper
 		/// <summary>
 		/// Zips the configured repositories.
 		/// </summary>
-		public Repository Zip()
+		public IRepository Zip()
 		{
 			this.logger.Log("Reading repositories...");
 			var zippedRepo = new ZippedRepo(this.repositories, this.config);
 			this.logger.Log("Zipping the following branches: " + string.Join(", ", zippedRepo.GetBranches()));
 
 			this.logger.Log("Initialize target repository...");
-			var targetRepo = InitTargetRepo();
-
+			IRepository targetRepo = InitTargetRepo();
+		
 			this.logger.Log("Building target repository...");
 			BuildRepository(targetRepo, zippedRepo);
 			return targetRepo;
@@ -63,8 +63,13 @@ namespace Mpdeimos.GitRepoZipper
 		/// <summary>
 		/// Initializes the target repository.
 		/// </summary>
-		private Repository InitTargetRepo()
+		private IRepository InitTargetRepo()
 		{
+			if (this.config.DryRun)
+			{
+				return new DryRepository();
+			}
+
 			var target = new DirectoryInfo(this.config.Target);
 			if (target.Exists)
 			{
@@ -96,7 +101,7 @@ namespace Mpdeimos.GitRepoZipper
 			return targetRepo;
 		}
 
-		private void BuildRepository(Repository repo, ZippedRepo source)
+		private void BuildRepository(IRepository repo, ZippedRepo source)
 		{
 			foreach (string name in source.GetBranches())
 			{
@@ -106,13 +111,13 @@ namespace Mpdeimos.GitRepoZipper
 
 			// TODO (MP) Handle anon branches
 
-			if (!this.config.NoMerges)
+			if (!this.config.NoMerges && !config.DryRun)
 			{
 				GraftMerges(repo, source);
 			}
 		}
 
-		private void CherryPickCommits(Repository repo, Commit[] commits, string branchName)
+		private void CherryPickCommits(IRepository repo, Commit[] commits, string branchName)
 		{
 			this.logger.Log("Zipping branch " + branchName + "...");
 			Commit previous = null;
@@ -140,6 +145,7 @@ namespace Mpdeimos.GitRepoZipper
 				if (repo.Branches[branchName] == null)
 				{
 					repo.Checkout(repo.CreateBranch(branchName, previous ?? original));
+
 					if (previous == null)
 					{
 						commitMap[original.Sha] = original;
@@ -152,8 +158,13 @@ namespace Mpdeimos.GitRepoZipper
 			}
 		}
 
-		private Commit CherryPickCommit(Repository repo, Commit original)
+		private Commit CherryPickCommit(IRepository repo, Commit original)
 		{
+			if (this.config.DryRun)
+			{
+				return original;
+			}
+
 			var commit = repo.Lookup(original.Sha) as Commit;
 			var options = new CherryPickOptions();
 			if (commit.Parents.Count() > 1)
@@ -188,14 +199,14 @@ namespace Mpdeimos.GitRepoZipper
 		/// Commits the worktree with the commit meta data from the given commit.
 		/// This allows creating an empty commit.
 		/// </summary>
-		private Commit CommitWorktree(Repository repo, Commit commit)
+		private Commit CommitWorktree(IRepository repo, Commit commit)
 		{
 			return repo.Commit(commit.Message, commit.Author, commit.Author, new CommitOptions {
 				AllowEmptyCommit = true
 			});
 		}
 
-		void GraftMerges(Repository repo, ZippedRepo source)
+		void GraftMerges(IRepository repo, ZippedRepo source)
 		{
 			this.logger.Log("Grafting merges...");
 			var allMerges = source.GetMerges().ToList();

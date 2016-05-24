@@ -40,6 +40,9 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[Option('r', "retry", HelpText = "Allows resuming an operation if an error occurrs by manually modifying the workspace.", DefaultValue = false)]
 		public bool Retry { get; set; }
 
+		[Option('n', "dry-run", HelpText = "Dry run of zipping the repositories (does not write anything to the specified output).", DefaultValue = false)]
+		public bool DryRun { get; set; }
+
 		/// <summary>
 		/// The usage help provided from annotated options.
 		/// </summary>

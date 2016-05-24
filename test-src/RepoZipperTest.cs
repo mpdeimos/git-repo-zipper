@@ -75,7 +75,7 @@ namespace Mpdeimos.GitRepoZipper
 			Assert.That(actual, Is.EquivalentTo(expected));
 		}
 
-		private static Commit Lookup(Repository repo, string sha)
+		private static Commit Lookup(IRepository repo, string sha)
 		{
 			return repo.Lookup(sha) as Commit;
 		}

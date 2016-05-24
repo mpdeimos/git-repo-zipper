@@ -18,7 +18,14 @@ namespace Mpdeimos.GitRepoZipper.Util
 			{
 				if (replace && this.replacing)
 				{
-					Console.SetCursorPosition(0, Math.Max(0, Console.CursorTop - 1));
+					try
+					{
+						Console.SetCursorPosition(0, Math.Max(0, Console.CursorTop - 1));
+					}
+					catch (ArgumentOutOfRangeException)
+					{
+						// mono does not like the window to be resized, ignore and just write a line
+					}
 				}
 
 				Console.WriteLine(message);

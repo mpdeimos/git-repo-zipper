@@ -21,9 +21,10 @@ namespace Mpdeimos.GitRepoZipper.Util
 					Console.SetCursorPosition(0, Math.Max(0, Console.CursorTop - 1));
 				}
 
-				this.replacing = replace;
 				Console.WriteLine(message);
 			}
+
+			this.replacing = replace;
 		}
 	}
 }

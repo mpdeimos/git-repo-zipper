@@ -3,6 +3,7 @@ using System.Linq;
 using LibGit2Sharp;
 using System.Collections.Generic;
 using Mpdeimos.GitRepoZipper.Util;
+using System.Text.RegularExpressions;
 
 namespace Mpdeimos.GitRepoZipper.Model
 {
@@ -36,7 +37,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 			foreach (var repo in repositories)
 			{
 				Commit commonRoot = null;
-				foreach (var branch in repo.Branches.Where(config.IsBranchIncluded))
+				foreach (var branch in repo.Branches.Where(config.IsBranchIncluded).OrderBy(b => b.FriendlyName, new BranchComparer(config)))
 				{
 					List<Commit> commits = RecordBranch(branch.FriendlyName, branch);
 					if (commonRoot == null)
@@ -116,6 +117,32 @@ namespace Mpdeimos.GitRepoZipper.Model
 		public IEnumerable<Commit> GetMerges()
 		{
 			return this.Merges;
+		}
+
+		public class BranchComparer : Comparer<string>
+		{
+			private Config config;
+
+			public BranchComparer(Config config)
+			{
+				this.config = config;
+			}
+
+			public override int Compare(string x, string y)
+			{
+				int comp = GetMatchingIncludeOrdinal(x).CompareTo(GetMatchingIncludeOrdinal(y));
+				if (comp != 0)
+				{
+					return comp;
+				}
+
+				return x.CompareTo(y);
+			}
+
+			private int GetMatchingIncludeOrdinal(string x)
+			{
+				return this.config.Include.TakeWhile(pattern => !Regex.IsMatch(x, pattern)).Count();
+			}
 		}
 	}
 }

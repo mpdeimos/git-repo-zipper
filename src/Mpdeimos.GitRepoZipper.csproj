@@ -24,7 +24,7 @@
         <Variable name="LD_PRELOAD" value="libcurl.so.3" />
       </EnvironmentVariables>
     </EnvironmentVariables>
-    <Commandlineparameters>-n -b ".+" -f -o "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/test" -i "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesA" "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesB"</Commandlineparameters>
+    <Commandlineparameters>-b ".+" -fg -o "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/test" -i "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesA" "/home/mpdeimos/workspaces/dotnet/git-repo-zipper/test-data/twoSimpleBranchesB"</Commandlineparameters>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>

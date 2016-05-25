@@ -25,8 +25,8 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[Option("remote", HelpText = "Include remote branches.", DefaultValue = false)]
 		public bool Remote { get; set; }
 
-		[Option("no-merges", HelpText = "Skip grafting of merges.", DefaultValue = false)]
-		public bool NoMerges { get; set; }
+		[Option('g', "graft-merges", HelpText = "Graft merges instead of rewriting the history.", DefaultValue = false)]
+		public bool GraftMerges { get; set; }
 
 		[Option('f', "force", HelpText = "Forces overriding the output repository.", DefaultValue = false)]
 		public bool Force { get; set; }

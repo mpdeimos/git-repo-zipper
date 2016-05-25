@@ -111,10 +111,7 @@ namespace Mpdeimos.GitRepoZipper
 
 			// TODO (MP) Handle anon branches
 
-			if (!this.config.NoMerges && !config.DryRun)
-			{
-				GraftMerges(repo, source);
-			}
+			RecordMerges(repo, source);
 		}
 
 		private void CherryPickCommits(IRepository repo, Commit[] commits, string branchName)
@@ -206,33 +203,57 @@ namespace Mpdeimos.GitRepoZipper
 			});
 		}
 
-		void GraftMerges(IRepository repo, ZippedRepo source)
+		void RecordMerges(IRepository repo, ZippedRepo source)
 		{
-			this.logger.Log("Grafting merges...");
+			this.logger.Log("Recording merges...");
 			var allMerges = source.GetMerges().ToList();
 			var knownMerges = allMerges.Where(m => commitMap.ContainsKey(m.Sha)).ToList();
 			this.logger.Log("Unknown merges: " + string.Join(", ", allMerges.Except(knownMerges)));
 			var originalMerges = knownMerges.ToDictionary(merge => commitMap[merge.Sha]);
 
+			if (this.config.DryRun)
+			{
+				return;
+			}
+
+			if (this.config.GraftMerges)
+			{
+				GraftMerges(repo, originalMerges);
+			}
+			else
+			{
+				RewriteMerges(repo, originalMerges);
+			}
+		}
+
+		private void GraftMerges(IRepository repo, Dictionary<Commit, Commit> originalMerges)
+		{
 			int count = 0;
 			this.logger.Log("0% Grafting " + originalMerges.Keys.Count + " commits", replace: true);
+
+			var grafts = originalMerges.Keys.Select(commit =>
+			{
+				this.logger.Log((100 * ++count / originalMerges.Keys.Count) + "% Grafting commit " + commit.Sha, replace: true);
+				var parents = new List<Commit> { commit };
+				parents.AddRange(TranslateMergeParents(commit, originalMerges));
+				return string.Join(" ", parents.Select(c => c.Sha));
+			
+			});
+
+			var graftsFile = Path.Combine(this.config.Target, ".git/info/grafts");
+			File.WriteAllLines(graftsFile, grafts);
+		}
+
+
+		private void RewriteMerges(IRepository repo, Dictionary<Commit, Commit> originalMerges)
+		{
+			int count = 0;
+			this.logger.Log("0% Rewriting " + originalMerges.Keys.Count + " commits", replace: true);
 			repo.Refs.RewriteHistory(new RewriteHistoryOptions {
 				CommitParentsRewriter = commit =>
 				{
-					this.logger.Log((100 * ++count / originalMerges.Keys.Count) + "% Grafting commit " + commit.Sha, replace: true);
-
-					Commit[] parents = originalMerges[commit].Parents
-						.Where(m => commitMap.ContainsKey(m.Sha))
-						.Select(parent => commitMap[parent.Sha]).ToArray();
-					if (!parents.Any())
-					{
-						return commit.Parents;
-					}
-
-					// ensure to take first zipped parent
-					parents[0] = commit.Parents.First();
-
-					return parents;
+					this.logger.Log((100 * ++count / originalMerges.Keys.Count) + "% Rewriting commit " + commit.Sha, replace: true);
+					return TranslateMergeParents(commit, originalMerges);
 				}
 			}, originalMerges.Keys);
 
@@ -241,6 +262,19 @@ namespace Mpdeimos.GitRepoZipper
 			{
 				repo.Refs.Remove(@ref);
 			}
+		}
+
+		private IEnumerable<Commit> TranslateMergeParents(Commit commit, Dictionary<Commit, Commit> originalMerges)
+		{
+
+			Commit[] parents = originalMerges[commit].Parents.Where(m => commitMap.ContainsKey(m.Sha)).Select(parent => commitMap[parent.Sha]).ToArray();
+			if (!parents.Any())
+			{
+				return commit.Parents;
+			}
+			// ensure to take first zipped parent
+			parents[0] = commit.Parents.First();
+			return parents;
 		}
 	}
 }

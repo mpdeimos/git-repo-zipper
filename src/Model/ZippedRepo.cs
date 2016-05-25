@@ -141,7 +141,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 
 			private int GetMatchingIncludeOrdinal(string x)
 			{
-				return this.config.Include.TakeWhile(pattern => !Regex.IsMatch(x, pattern)).Count();
+				return this.config.Include?.TakeWhile(pattern => !Regex.IsMatch(x, pattern)).Count() ?? 0;
 			}
 		}
 	}

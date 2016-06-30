@@ -15,17 +15,33 @@ namespace Mpdeimos.GitRepoZipper.Model
 		/// <summary>
 		/// The known commits of the zipped repository.
 		/// </summary>
-		private HashSet<Commit> Commits = new HashSet<Commit>();
+		private HashSet<ShallowCommit> Commits = new HashSet<ShallowCommit>();
 
 		/// <summary>
 		/// List of all merge commits.
 		/// </summary>
-		private List<Commit> Merges = new List<Commit>();
+		private List<ShallowCommit> Merges = new List<ShallowCommit>();
 
 		/// <summary>
 		/// The named branches in the zipped repository.
 		/// </summary>
 		private Dictionary<string, ZippedBranch> Branches = new Dictionary<string, ZippedBranch>();
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ZippedRepo(IEnumerable<string> repositories, Config config = null)
+		{
+			config = config ?? new Config();
+
+			foreach (var repoPath in repositories)
+			{
+				using (var repo = new Repository(repoPath))
+				{
+					RecordRepo(repo, config);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Constructor
@@ -36,18 +52,26 @@ namespace Mpdeimos.GitRepoZipper.Model
 
 			foreach (var repo in repositories)
 			{
-				Commit commonRoot = null;
-				foreach (var branch in repo.Branches.Where(config.IsBranchIncluded).OrderBy(b => b.FriendlyName, new BranchComparer(config)))
+				RecordRepo(repo, config);
+			}
+		}
+
+		/// <summary>
+		/// Records the commits and branches from the repository
+		/// </summary>
+		private void RecordRepo(Repository repo, Config config)
+		{
+			ShallowCommit commonRoot = null;
+			foreach (var branch in repo.Branches.Where(config.IsBranchIncluded).OrderBy(b => b.FriendlyName, new BranchComparer(config)))
+			{
+				List<ShallowCommit> commits = RecordBranch(repo, branch.FriendlyName, branch);
+				if (commonRoot == null)
 				{
-					List<Commit> commits = RecordBranch(branch.FriendlyName, branch);
-					if (commonRoot == null)
-					{
-						commonRoot = commits.First();
-					}
-					if (commits.First() != commonRoot)
-					{
-						throw new ZipperException("Cannot zip repositories with multiple roots: " + repo.Info.Path + " branch: " + branch.FriendlyName);
-					}
+					commonRoot = commits.First();
+				}
+				if (commits.First() != commonRoot)
+				{
+					throw new ZipperException("Cannot zip repositories with multiple roots: " + repo.Info.Path + " branch: " + branch.FriendlyName);
 				}
 			}
 		}
@@ -55,7 +79,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 		/// <summary>
 		/// Adds a branch to the zipped repository. Returns the commits in oldes-to-newest order.
 		/// </summary>
-		public List<Commit> RecordBranch(string name, Branch branch)
+		public List<ShallowCommit> RecordBranch(Repository repo, string name, Branch branch)
 		{
 			if (!this.Branches.ContainsKey(name))
 			{
@@ -63,7 +87,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 			}
 
 			var zippedBranch = this.Branches[name].AddBranch(branch);
-			RecordCommits(zippedBranch);
+			RecordCommits(repo, zippedBranch);
 
 			return zippedBranch;
 		}
@@ -71,7 +95,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 		/// <summary>
 		/// Records a list of commits.
 		/// </summary>
-		private void RecordCommits(IEnumerable<Commit> commits)
+		private void RecordCommits(Repository repo, IEnumerable<ShallowCommit> commits)
 		{
 			foreach (var commit in commits)
 			{
@@ -86,7 +110,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 					this.Merges.Add(commit);
 					foreach (var parent in commit.Parents.Skip(1))
 					{
-						this.RecordCommits(RepoUtil.GetPrimaryParents(parent));
+						this.RecordCommits(repo, RepoUtil.GetPrimaryParents(repo, parent.Sha).Select(ShallowCommit.FromCommit));
 					}
 				}
 			}
@@ -97,15 +121,15 @@ namespace Mpdeimos.GitRepoZipper.Model
 			return this.Branches.Keys;
 		}
 
-		public IEnumerable<Commit> GetBranch(string name)
+		public IEnumerable<ShallowCommit> GetBranch(string name)
 		{
 			return this.Branches[name].GetZippedBranch();
 		}
 
 		// TODO Test
-		public IEnumerable<Commit> GetAnonymousBranchCommits()
+		public IEnumerable<ShallowCommit> GetAnonymousBranchCommits()
 		{
-			var mergeParents = new HashSet<Commit>(this.Merges.SelectMany(merge => merge.Parents));
+			var mergeParents = new HashSet<ShallowCommit>(this.Merges.SelectMany(merge => merge.Parents));
 			foreach (var branchCommit in this.Branches.SelectMany(entry => entry.Value.GetZippedBranch()))
 			{
 				mergeParents.Remove(branchCommit);
@@ -114,7 +138,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 			return mergeParents;
 		}
 
-		public IEnumerable<Commit> GetMerges()
+		public IEnumerable<ShallowCommit> GetMerges()
 		{
 			return this.Merges;
 		}

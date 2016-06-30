@@ -3,6 +3,7 @@ using LibGit2Sharp;
 using System.Collections.Generic;
 using NUnit.Framework;
 using System.Linq;
+using Mpdeimos.GitRepoZipper.Model;
 
 namespace Mpdeimos.GitRepoZipper
 {
@@ -49,6 +50,14 @@ namespace Mpdeimos.GitRepoZipper
 		/// Returns the Sha of a commit.
 		/// </summary>
 		protected static string Sha(Commit commit)
+		{
+			return commit.Sha;
+		}
+
+		/// <summary>
+		/// Returns the Sha of a commit.
+		/// </summary>
+		protected static string Sha(ShallowCommit commit)
 		{
 			return commit.Sha;
 		}

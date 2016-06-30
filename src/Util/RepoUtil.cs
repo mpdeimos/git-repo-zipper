@@ -25,6 +25,17 @@ namespace Mpdeimos.GitRepoZipper.Util
 		}
 
 		/// <summary>
+		/// Recursively returns all parents of the given commit. Each returned commit will
+		/// be the first parent of the previous commit. This will not return commits that
+		/// are not the first parent (e.g. merged commits).
+		/// </summary>
+		public static IEnumerable<Commit> GetPrimaryParents(Repository repo, string sha)
+		{
+			var commit = repo.Lookup(sha) as Commit;
+			return GetPrimaryParents(commit);
+		}
+
+		/// <summary>
 		/// Returns the merges into a branch. The key is the merge source commit, the values are the merge target commits.
 		/// </summary>
 		public static Dictionary<Commit, HashSet<Commit>> GetMergesBySource(Repository repo)

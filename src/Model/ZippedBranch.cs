@@ -19,7 +19,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 		/// <summary>
 		/// The branches of single repositories.
 		/// </summary>
-		private List<List<Commit>> branches = new List<List<Commit>>();
+		private List<List<ShallowCommit>> branches = new List<List<ShallowCommit>>();
 
 		/// <summary>
 		/// Constructor.
@@ -32,9 +32,9 @@ namespace Mpdeimos.GitRepoZipper.Model
 		/// <summary>
 		/// Adds the commits of a branch in oldest-to-newest order. and returns the list of commits.
 		/// </summary>
-		public List<Commit> AddBranch(Branch branch)
+		public List<ShallowCommit> AddBranch(Branch branch)
 		{
-			var commits = RepoUtil.GetPrimaryParents(branch.Tip).Reverse().ToList();
+			var commits = RepoUtil.GetPrimaryParents(branch.Tip).Select(ShallowCommit.FromCommit).Reverse().ToList();
 			this.branches.Add(commits);
 			return commits;
 		}
@@ -42,9 +42,9 @@ namespace Mpdeimos.GitRepoZipper.Model
 		/// <summary>
 		/// Returns the zipped commits in oldest-to-newest-oder.
 		/// </summary>
-		public IEnumerable<Commit> GetZippedBranch()
+		public IEnumerable<ShallowCommit> GetZippedBranch()
 		{
-			var queue = this.branches.Select(commits => new Queue<Commit>(commits)).ToList();
+			var queue = this.branches.Select(commits => new Queue<ShallowCommit>(commits)).ToList();
 			while (queue.Count > 0)
 			{
 				var next = queue.Aggregate((acc, cur) => acc.Peek().Author.When < cur.Peek().Author.When ? acc : cur);

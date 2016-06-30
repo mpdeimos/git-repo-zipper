@@ -21,12 +21,12 @@ namespace Mpdeimos.GitRepoZipper
 		/// <summary>
 		/// The repositories to zip.
 		/// </summary>
-		private readonly IEnumerable<Repository> repositories;
+		private readonly IEnumerable<string> repositories;
 
 		/// <summary>
 		/// Maps original commits to zipped ones.
 		/// </summary>
-		private readonly Dictionary<string, Commit> commitMap = new Dictionary<string, Commit>();
+		private readonly Dictionary<string, ShallowCommit> commitMap = new Dictionary<string, ShallowCommit>();
 
 		/// <summary>
 		/// The logger.
@@ -40,7 +40,7 @@ namespace Mpdeimos.GitRepoZipper
 		{
 			this.config = config;
 			this.logger = new Logger{ Silent = config.Silent };
-			this.repositories = config.Sources?.Select(source => new Repository(source));
+			this.repositories = config.Sources;
 		}
 
 		/// <summary>
@@ -91,12 +91,15 @@ namespace Mpdeimos.GitRepoZipper
 
 			Repository.Init(target.FullName);
 			Repository targetRepo = new Repository(target.FullName);
-			foreach (Repository repo in this.repositories)
+			foreach (string repoPath in this.repositories)
 			{
-				string name = Path.GetFileName(repo.Info.WorkingDirectory.TrimEnd(Path.DirectorySeparatorChar));
-				targetRepo.Network.Remotes.Add(name, repo.Info.Path);
-				this.logger.Log("Fetching " + name + "...");
-				targetRepo.Fetch(name);
+				using (var repo = new Repository(repoPath))
+				{
+					string name = Path.GetFileName(repo.Info.WorkingDirectory.TrimEnd(Path.DirectorySeparatorChar));
+					targetRepo.Network.Remotes.Add(name, repo.Info.Path);
+					this.logger.Log("Fetching " + name + "...");
+					targetRepo.Fetch(name);
+				}
 			}
 			return targetRepo;
 		}
@@ -114,10 +117,10 @@ namespace Mpdeimos.GitRepoZipper
 			RecordMerges(repo, source);
 		}
 
-		private void CherryPickCommits(IRepository repo, Commit[] commits, string branchName)
+		private void CherryPickCommits(IRepository repo, ShallowCommit[] commits, string branchName)
 		{
 			this.logger.Log("Zipping branch " + branchName + "...");
-			Commit previous = null;
+			ShallowCommit previous = null;
 			for (int i = 0; i < commits.Length; i++)
 			{
 				var original = commits[i];
@@ -141,7 +144,7 @@ namespace Mpdeimos.GitRepoZipper
 
 				if (repo.Branches[branchName] == null)
 				{
-					repo.Checkout(repo.CreateBranch(branchName, previous ?? original));
+					repo.Checkout(repo.CreateBranch(branchName, (previous ?? original).Sha));
 
 					if (previous == null)
 					{
@@ -155,7 +158,7 @@ namespace Mpdeimos.GitRepoZipper
 			}
 		}
 
-		private Commit CherryPickCommit(IRepository repo, Commit original)
+		private ShallowCommit CherryPickCommit(IRepository repo, ShallowCommit original)
 		{
 			if (this.config.DryRun)
 			{
@@ -171,11 +174,11 @@ namespace Mpdeimos.GitRepoZipper
 
 			try
 			{
-				return repo.CherryPick(commit, new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When), options).Commit;
+				return ShallowCommit.FromCommit(repo.CherryPick(commit, new Signature(commit.Author.Name, commit.Author.Email, commit.Author.When), options).Commit);
 			}
 			catch (EmptyCommitException)
 			{
-				return this.CommitWorktree(repo, commit);
+				return ShallowCommit.FromCommit(this.CommitWorktree(repo, commit));
 			}
 			catch (Exception e)
 			{
@@ -188,7 +191,7 @@ namespace Mpdeimos.GitRepoZipper
 				this.logger.Log("Press any key after fixing conflicts manually.", true);
 				Console.ReadKey();
 
-				return this.CommitWorktree(repo, commit);
+				return ShallowCommit.FromCommit(this.CommitWorktree(repo, commit));
 			}
 		}
 
@@ -226,7 +229,7 @@ namespace Mpdeimos.GitRepoZipper
 			}
 		}
 
-		private void GraftMerges(IRepository repo, Dictionary<Commit, Commit> originalMerges)
+		private void GraftMerges(IRepository repo, Dictionary<ShallowCommit, ShallowCommit> originalMerges)
 		{
 			int count = 0;
 			this.logger.Log("0% Grafting " + originalMerges.Keys.Count + " commits", replace: true);
@@ -234,7 +237,7 @@ namespace Mpdeimos.GitRepoZipper
 			var grafts = originalMerges.Keys.Select(commit =>
 			{
 				this.logger.Log((100 * ++count / originalMerges.Keys.Count) + "% Grafting commit " + commit.Sha, replace: true);
-				var parents = new List<Commit> { commit };
+				var parents = new List<ShallowCommit> { commit };
 				parents.AddRange(TranslateMergeParents(commit, originalMerges));
 				return string.Join(" ", parents.Select(c => c.Sha));
 			
@@ -245,7 +248,7 @@ namespace Mpdeimos.GitRepoZipper
 		}
 
 
-		private void RewriteMerges(IRepository repo, Dictionary<Commit, Commit> originalMerges)
+		private void RewriteMerges(IRepository repo, Dictionary<ShallowCommit, ShallowCommit> originalMerges)
 		{
 			int count = 0;
 			this.logger.Log("0% Rewriting " + originalMerges.Keys.Count + " commits", replace: true);
@@ -253,9 +256,9 @@ namespace Mpdeimos.GitRepoZipper
 				CommitParentsRewriter = commit =>
 				{
 					this.logger.Log((100 * ++count / originalMerges.Keys.Count) + "% Rewriting commit " + commit.Sha, replace: true);
-					return TranslateMergeParents(commit, originalMerges);
+					return TranslateMergeParents(ShallowCommit.FromCommit(commit), originalMerges).Select(p => repo.Lookup(p.Sha) as Commit);
 				}
-			}, originalMerges.Keys);
+			}, originalMerges.Keys.Select(p => repo.Lookup(p.Sha) as Commit));
 
 			// cleanup original refs
 			foreach (var @ref in repo.Refs.FromGlob("refs/original/*"))
@@ -264,10 +267,10 @@ namespace Mpdeimos.GitRepoZipper
 			}
 		}
 
-		private IEnumerable<Commit> TranslateMergeParents(Commit commit, Dictionary<Commit, Commit> originalMerges)
+		private IEnumerable<ShallowCommit> TranslateMergeParents(ShallowCommit commit, Dictionary<ShallowCommit, ShallowCommit> originalMerges)
 		{
 
-			Commit[] parents = originalMerges[commit].Parents.Where(m => commitMap.ContainsKey(m.Sha)).Select(parent => commitMap[parent.Sha]).ToArray();
+			ShallowCommit[] parents = originalMerges[commit].Parents.Where(m => commitMap.ContainsKey(m.Sha)).Select(parent => commitMap[parent.Sha]).ToArray();
 			if (!parents.Any())
 			{
 				return commit.Parents;

@@ -31,9 +31,6 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[Option('f', "force", HelpText = "Forces overriding the output repository.", DefaultValue = false)]
 		public bool Force { get; set; }
 
-		[Option('k', "keep", HelpText = "Keeps the remotes to the input repositories.", DefaultValue = false)]
-		public bool Clean { get; set; }
-
 		[Option('s', "silent", HelpText = "Prevents printing to proggress information to the console.", DefaultValue = false)]
 		public bool Silent { get; set; }
 

@@ -13,51 +13,38 @@ namespace Mpdeimos.GitRepoZipper.Model
 		[Option('o', "output", Required = true, HelpText = "The output repository to write to.")]
 		public string Target { get; set; }
 
-		[OptionArray('i', "input", HelpText = "The input repositories to read from.")]
-		public string[] Sources { get; set; }
+		[Option('i', "input", HelpText = "The input repositories to read from.")]
+		public IEnumerable<string> Sources { get; set; }
 
-		[OptionArray('b', "include", HelpText = "The branches to include (by friendly name, regex).")]
-		public string[] Include { get; set; }
+		[Option('b', "include", HelpText = "The branches to include (by friendly name, regex).")]
+		public IEnumerable<string> Include { get; set; }
 
-		[OptionArray('x', "exclude", HelpText = "The branches to exclude (by friendly name, regex).")]
-		public string[] Exclude { get; set; }
+		[Option('x', "exclude", HelpText = "The branches to exclude (by friendly name, regex).")]
+		public IEnumerable<string> Exclude { get; set; }
 
-		[Option("remote", HelpText = "Include remote branches.", DefaultValue = false)]
+		[Option("remote", HelpText = "Include remote branches.", Default = false)]
 		public bool Remote { get; set; }
 
-		[Option('g', "graft-merges", HelpText = "Graft merges instead of rewriting the history.", DefaultValue = false)]
+		[Option('g', "graft-merges", HelpText = "Graft merges instead of rewriting the history.", Default = false)]
 		public bool GraftMerges { get; set; }
 
-		[Option('f', "force", HelpText = "Forces overriding the output repository.", DefaultValue = false)]
+		[Option('f', "force", HelpText = "Forces overriding the output repository.", Default = false)]
 		public bool Force { get; set; }
 
-		[Option('s', "silent", HelpText = "Prevents printing to proggress information to the console.", DefaultValue = false)]
+		[Option('s', "silent", HelpText = "Prevents printing to proggress information to the console.", Default = false)]
 		public bool Silent { get; set; }
 
-		[Option('r', "retry", HelpText = "Allows resuming an operation if an error occurrs by manually modifying the workspace.", DefaultValue = false)]
+		[Option('r', "retry", HelpText = "Allows resuming an operation if an error occurrs by manually modifying the workspace.", Default = false)]
 		public bool Retry { get; set; }
 
-		[Option('n', "dry-run", HelpText = "Dry run of zipping the repositories (does not write anything to the specified output).", DefaultValue = false)]
+		[Option('n', "dry-run", HelpText = "Dry run of zipping the repositories (does not write anything to the specified output).", Default = false)]
 		public bool DryRun { get; set; }
 
-		/// <summary>
-		/// The usage help provided from annotated options.
-		/// </summary>
-		[HelpOption]
-		public string GetUsage()
-		{
-			return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
-		}
+		[Option('k', "keep", HelpText = "Keeps the remotes to the input repositories.", Default = false)]
+		public bool Keep { get; set; }
 
-		/// <summary>
-		/// Constructor for parsing the commandline.
-		/// </summary>
-		public static Config FromCommandline(params string[] args)
-		{
-			var config = new Config();
-			Parser.Default.ParseArgumentsStrict(args, config);
-			return config;			
-		}
+		[Option('t', "tags", HelpText = "Keep tags, they might not be correctly rewritten.", Default = false)]
+		public bool Tags { get; set; }
 
 		/// <summary>
 		/// Returns whether a branch is included by this configuration.

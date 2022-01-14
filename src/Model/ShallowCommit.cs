@@ -48,6 +48,11 @@ namespace Mpdeimos.GitRepoZipper.Model
 
 		public static ShallowCommit FromCommit(Commit commit)
 		{
+            if (commit == null)
+            {
+				throw new ArgumentNullException(nameof(commit));
+            }
+
 			if (!Cache.ContainsKey(commit.Sha))
 			{
 				Cache[commit.Sha] = new ShallowCommit(commit);

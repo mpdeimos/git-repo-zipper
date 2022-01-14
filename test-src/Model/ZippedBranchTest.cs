@@ -9,7 +9,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 	[TestFixture]
 	public class ZippedBranchTest : RepoTestBase
 	{
-		public IEnumerable<TestCaseData> TestCaseData
+		static public IEnumerable<TestCaseData> TestCaseData
 		{
 			get
 			{

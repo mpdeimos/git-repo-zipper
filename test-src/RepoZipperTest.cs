@@ -25,7 +25,7 @@ namespace Mpdeimos.GitRepoZipper
 			Assert.Throws<RepositoryNotFoundException>(() => zipper.Zip());
 		}
 
-		public IEnumerable<TestCaseData> TestCaseData
+		static public IEnumerable<TestCaseData> TestCaseData
 		{
 			get
 			{

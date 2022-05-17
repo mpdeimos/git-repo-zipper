@@ -176,7 +176,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 			}
 		}
 
-		public Index Index
+		public LibGit2Sharp.Index Index
 		{
 			get
 			{
@@ -287,12 +287,24 @@ namespace Mpdeimos.GitRepoZipper.Model
 
 		public BranchCollection Branches { get; } = new DryBranchCollection();
 
-		public Branch Checkout(Branch branch, CheckoutOptions options)
+        public WorktreeCollection Worktrees => throw new NotImplementedException();
+
+        public Branch Checkout(Branch branch, CheckoutOptions options)
 		{
 			return branch;
 		}
 
-		public class DryBranchCollection : BranchCollection
+        public void Checkout(Tree tree, IEnumerable<string> paths, CheckoutOptions opts)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RevParse(string revision, out Reference reference, out GitObject obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public class DryBranchCollection : BranchCollection
 		{
 			private Dictionary<string, Branch> branches = new Dictionary<string, Branch>();
 

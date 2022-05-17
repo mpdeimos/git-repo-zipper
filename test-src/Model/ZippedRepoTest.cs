@@ -22,7 +22,7 @@ namespace Mpdeimos.GitRepoZipper.Model
 			Assert.Throws<ZipperException>(() => new ZippedRepo(GetTestRepos(TestData.GitOrphanedBranch)));
 		}
 
-		public IEnumerable<TestCaseData> TestCaseData
+		static public IEnumerable<TestCaseData> TestCaseData
 		{
 			get
 			{
